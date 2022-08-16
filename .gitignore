@@ -4,4 +4,4 @@ dist
 yarn-error.log
 .env
 coverage
-db.sqlite
+db.sqlite*
