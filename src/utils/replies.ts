@@ -59,10 +59,13 @@ export function cancelError() {
   return embedError().setTitle('Oh non 😿').setDescription("Une erreur s'est produite, empêchant l'annulation du tournoi")
 }
 
-export function infoSuccess(name: string, date: Date) {
+export function infoSuccess(name: string, date: Date, participants = 0) {
   return embedInfo()
     .setTitle(`Bienvenue au tournoi "${name}" !`)
-    .setDescription(`Tu peux participer jusqu'au ${formatDate(date)}\nPour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image`)
+    .setDescription(
+      `Il y a pour l'instant ${participants} participants. Tu peux participer jusqu'au ${formatDate(date)}.
+Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.`
+    )
 }
 
 export function infoError() {
@@ -78,13 +81,20 @@ export function closeError() {
 }
 
 export function registerSuccess(name: string) {
-  return embedSuccess()
-    .setTitle('Félicitations!')
-    .setDescription(`Cette magnigique image est inscrite au tournoi "${name}".\nTu peux changer l'image inscrite en appelant à nous la command \`/mt-register\``)
+  return embedSuccess().setTitle('Félicitations!').setDescription(`Cette magnigique image est inscrite au tournoi "${name}".
+Tu peux changer l'image inscrite en appelant à nous la command \`/mt-register\``)
 }
 
 export function registerError() {
   return embedError().setTitle('Oh non 😿').setDescription("Une erreur s'est produite, empêchant l'inscription au tournoi")
+}
+
+export function downloadSuccess(participations: Participation[]) {
+  return embedSuccess().setTitle("C'est partiii !").setDescription(`Waouh, on a eu ${participations.length} participants ! C'est énorme !`)
+}
+
+export function downloadError() {
+  return embedError().setTitle('Oh non 😿').setDescription("Une erreur s'est produite, empêchant le téléchargement des images")
 }
 
 export function alreadyRunning() {
@@ -94,26 +104,32 @@ export function alreadyRunning() {
 }
 
 export function noRunning() {
-  return embedInfo().setTitle("Il n'y a pas de tournoi en cours en ce moment.").setDescription("Reste à l'affût, il y en aura peut-être un autre bientôt ;)")
+  return embedInfo().setTitle("Il n'y a pas de tournoi en cours en ce moment.").setDescription("Reste à l'affût, il y en aura peut-être un autre bientôt 😉")
 }
 
 export function infoParticipant(name: string, date: Date, participation: Participation) {
   return embedInfo()
     .setTitle(`Bienvenue au tournoi "${name}" !`)
     .setDescription(
-      `Ton image a bien été inscrite au tournoi.\nTu peux la modifier jusqu'au ${formatDate(date)} grâce à la commande \`/mt-register\`\nPrompt: \`${participation.prompt}\``
+      `Ton image a bien été inscrite au tournoi.
+Tu peux la modifier jusqu'au ${formatDate(date)} grâce à la commande \`/mt-register\`
+Prompt: \`${participation.prompt}\``
     )
     .setImage(participation.url)
 }
 
 export function closed(name: string, date: Date) {
   return embedWarn()
-    .setTitle('Désolé !')
+    .setTitle('Oh non 😿')
     .setDescription(`Le tournoi "${name}" n'accepte plus d'inscriptions depuis le ${formatDate(date)}`)
 }
 
 export function alreadyRegistered() {
   return embedError().setTitle("C'est pas beau de voler 😠").setDescription('Cette image a déjà été inscrite par un autre utilisateur')
+}
+
+export function noParticipant() {
+  return embedWarn().setTitle('Oh non 😿').setDescription("Personne n'a participé au tournoi. Espérons qu'il y ait plus de monde la prochaine fois !")
 }
 
 function formatDate(date: Date) {

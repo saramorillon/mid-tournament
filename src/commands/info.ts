@@ -6,7 +6,7 @@ export async function info(interaction: ButtonInteraction | ChatInputCommandInte
   await interaction.deferReply({ ephemeral: true })
 
   try {
-    const current = await prisma.tournament.findFirst({ where: { running: true } })
+    const current = await prisma.tournament.findFirst({ where: { running: true }, include: { _count: { select: { participations: true } } } })
     if (!current) {
       await interaction.editReply({ embeds: [noRunning()] })
       return
@@ -16,7 +16,7 @@ export async function info(interaction: ButtonInteraction | ChatInputCommandInte
       where: { tournamentId: current.id, user: interaction.user.username },
     })
     if (!participation) {
-      await interaction.editReply({ embeds: [infoSuccess(current.name, current.endDate)] })
+      await interaction.editReply({ embeds: [infoSuccess(current.name, current.endDate, current._count.participations)] })
       return
     }
 
