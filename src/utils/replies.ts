@@ -175,5 +175,5 @@ export function notDeleted() {
 }
 
 export function formatDate(date: Date) {
-  return format(utcToZonedTime(date, 'Europe/Paris'), `do MMMM yyyy 'à' H'h'mm`, { locale: fr })
+  return format(utcToZonedTime(date, 'Europe/Paris'), `d MMMM yyyy 'à' H'h'mm`, { locale: fr })
 }
