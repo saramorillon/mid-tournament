@@ -1,3 +1,4 @@
+import { format } from '@fast-csv/format'
 import { Participation, User } from '@prisma/client'
 import archiver from 'archiver'
 import { IncomingMessage } from 'http'
@@ -12,10 +13,15 @@ export function zip(participations: (Participation & { user: User })[]) {
       const buffer = Buffer.concat(chunks)
       resolve(buffer)
     })
+    const promptoscope = format({ delimiter: ';', quote: '"' })
+    promptoscope.write(['Utilisateur', 'Prompt', 'URL'])
+    archive.append(promptoscope, { name: 'promptoscope.csv' })
     for (const participation of participations) {
       const stream = await new Promise<IncomingMessage>((resolve) => https.get(participation.url, resolve))
       archive.append(stream, { name: `${participation.user.username}.png` })
+      promptoscope.write([participation.user.username, participation.prompt, participation.url])
     }
+    promptoscope.end()
     archive.finalize()
   })
 }
