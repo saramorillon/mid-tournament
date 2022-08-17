@@ -43,7 +43,7 @@ RUN yarn build
 
 FROM base as release
 
-ENV DATABASE_URL=/app/db/db.sqlite
+ENV DATABASE_URL="file:/app/db/db.sqlite"
 
 COPY --from=dependencies --chown=node:node /app/node_modules/ /app/node_modules/
 COPY --from=build --chown=node:node /app/dist/ /app/dist/
