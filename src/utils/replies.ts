@@ -1,4 +1,4 @@
-import { Participation } from '@prisma/client'
+import { Participation, Tournament } from '@prisma/client'
 import { format, utcToZonedTime } from 'date-fns-tz'
 import { fr } from 'date-fns/locale'
 import { EmbedBuilder } from 'discord.js'
@@ -59,10 +59,12 @@ export function cancelError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant l'annulation du tournoi")
 }
 
-export function infoSuccess(name: string, date: Date, participants = 0) {
-  const description = `Il y a pour l'instant ${participants} participants. Tu peux participer jusqu'au ${formatDate(date)}.
-Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.`
-  return embedInfo(`Bienvenue au tournoi "${name}" !`, description)
+export function infoSuccess(tournament: Tournament, participants = 0) {
+  const description = `Il y a pour l'instant ${participants} participants. Tu peux participer jusqu'au ${formatDate(tournament.endDate)}.
+Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.
+
+${tournament.description || ''}`.trim()
+  return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description)
 }
 
 export function infoError() {
@@ -122,15 +124,15 @@ export function noRunning() {
   return embedInfo("Il n'y a pas de tournoi en cours en ce moment.", "Reste à l'affût, il y en aura peut-être un autre bientôt 😉")
 }
 
-export function infoParticipant(name: string, date: Date, participation: Participation) {
+export function infoParticipant(tournament: Tournament, participation: Participation) {
   const description = `Ton image a bien été inscrite au tournoi.
-Tu peux la modifier jusqu'au ${formatDate(date)} grâce à la commande \`/mt-register\`
+Tu peux la modifier jusqu'au ${formatDate(tournament.endDate)} grâce à la commande \`/mt-register\`
 Prompt: \`${participation.prompt}\``
-  return embedInfo(`Bienvenue au tournoi "${name}" !`, description).setImage(participation.url)
+  return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description).setImage(participation.url)
 }
 
-export function closed(name: string, date: Date) {
-  return embedWarn('Oh non 😿', `Le tournoi "${name}" n'accepte plus d'inscriptions depuis le ${formatDate(date)}`)
+export function closed(tournament: Tournament) {
+  return embedWarn('Oh non 😿', `Le tournoi "${tournament.name}" n'accepte plus d'inscriptions depuis le ${formatDate(tournament.endDate)}`)
 }
 
 export function alreadyRegistered() {

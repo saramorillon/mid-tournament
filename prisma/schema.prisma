@@ -17,11 +17,12 @@ model User {
 }
 
 model Tournament {
-  id        Int      @id @default(autoincrement())
-  name      String
-  startDate DateTime @default(now())
-  endDate   DateTime
-  running   Boolean
+  id          Int      @id @default(autoincrement())
+  name        String
+  startDate   DateTime @default(now())
+  endDate     DateTime
+  running     Boolean
+  description String?  @db.Text
 
   participations Participation[]
 

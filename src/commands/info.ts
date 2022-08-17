@@ -16,11 +16,11 @@ export async function info(interaction: ButtonInteraction | ChatInputCommandInte
       where: { tournamentId: current.id, user: { username: interaction.user.username } },
     })
     if (!participation) {
-      await interaction.editReply({ embeds: [infoSuccess(current.name, current.endDate, current._count.participations)] })
+      await interaction.editReply({ embeds: [infoSuccess(current, current._count.participations)] })
       return
     }
 
-    await interaction.editReply({ embeds: [infoParticipant(current.name, current.endDate, participation)] })
+    await interaction.editReply({ embeds: [infoParticipant(current, participation)] })
   } catch (error) {
     console.error(error)
     await interaction.editReply({ embeds: [infoError()] })

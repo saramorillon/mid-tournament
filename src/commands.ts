@@ -19,12 +19,7 @@ export const commands: Command[] = [
     execute: info,
   },
   {
-    builder: new SlashCommandBuilder()
-      .setName('mt-create')
-      .setDescription('Créer un nouveau tournoi')
-      .addStringOption((option) => option.setName('name').setDescription('Name').setRequired(true))
-      .addStringOption((option) => option.setName('end-date').setDescription('End date').setRequired(true))
-      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    builder: new SlashCommandBuilder().setName('mt-create').setDescription('Créer un nouveau tournoi').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: create,
   },
   {

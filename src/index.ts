@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import { getCommand } from './commands'
 import { acceptCallback } from './commands/accept'
+import { createCallback } from './commands/create'
 import { deleteDataCallback } from './commands/delete'
 import { settings } from './settings'
 
@@ -24,6 +25,10 @@ client.on('interactionCreate', async (interaction) => {
       await acceptCallback(interaction, interaction.customId === 'accept-yes')
     } else if (interaction.customId.startsWith('delete')) {
       await deleteDataCallback(interaction, interaction.customId === 'delete-yes')
+    }
+  } else if (interaction.isModalSubmit()) {
+    if (interaction.customId === 'create') {
+      await createCallback(interaction)
     }
   }
 })

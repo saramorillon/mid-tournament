@@ -20,7 +20,7 @@ export async function register(interaction: ChatInputCommandInteraction) {
     }
 
     if (isBefore(current.endDate, new Date())) {
-      await interaction.editReply({ embeds: [closed(current.name, current.endDate)] })
+      await interaction.editReply({ embeds: [closed(current)] })
       return
     }
 
