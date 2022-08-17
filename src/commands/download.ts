@@ -13,7 +13,7 @@ export async function download(interaction: ChatInputCommandInteraction) {
       return
     }
 
-    const participations = await prisma.participation.findMany({ where: { tournamentId: current.id } })
+    const participations = await prisma.participation.findMany({ where: { tournamentId: current.id }, include: { user: true } })
     if (!participations.length) {
       await interaction.editReply({ embeds: [noParticipant()] })
       return

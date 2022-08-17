@@ -13,7 +13,7 @@ export async function info(interaction: ButtonInteraction | ChatInputCommandInte
     }
 
     const participation = await prisma.participation.findFirst({
-      where: { tournamentId: current.id, user: interaction.user.username },
+      where: { tournamentId: current.id, user: { username: interaction.user.username } },
     })
     if (!participation) {
       await interaction.editReply({ embeds: [infoSuccess(current.name, current.endDate, current._count.participations)] })

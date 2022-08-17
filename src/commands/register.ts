@@ -1,12 +1,18 @@
 import { isBefore } from 'date-fns'
 import { ChatInputCommandInteraction } from 'discord.js'
 import { prisma } from '../prisma'
-import { alreadyRegistered, closed, missingPrompt, missingUrl, noRunning, registerError, registerSuccess } from '../utils/replies'
+import { alreadyRegistered, closed, missingPrompt, missingUrl, mustAccept, noRunning, registerError, registerSuccess } from '../utils/replies'
 
 export async function register(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply({ ephemeral: true })
 
   try {
+    const user = await prisma.user.findUnique({ where: { username: interaction.user.username } })
+    if (!user) {
+      await interaction.editReply({ embeds: [mustAccept()] })
+      return
+    }
+
     const current = await prisma.tournament.findFirst({ where: { running: true } })
     if (!current) {
       await interaction.editReply({ embeds: [noRunning()] })
@@ -30,15 +36,15 @@ export async function register(interaction: ChatInputCommandInteraction) {
       return
     }
 
-    const existingUrl = await prisma.participation.findFirst({ where: { tournamentId: current.id, url } })
-    if (existingUrl && existingUrl.user !== interaction.user.username) {
+    const existingUrl = await prisma.participation.findFirst({ where: { tournamentId: current.id, url }, include: { user: true } })
+    if (existingUrl && existingUrl.user.username !== user.username) {
       await interaction.editReply({ embeds: [alreadyRegistered()] })
       return
     }
 
     await prisma.participation.upsert({
-      where: { tournamentId_user: { tournamentId: current.id, user: interaction.user.username } },
-      create: { tournamentId: current.id, user: interaction.user.username, prompt, url, votes: 0 },
+      where: { tournamentId_userId: { tournamentId: current.id, userId: user.id } },
+      create: { tournamentId: current.id, userId: user.id, prompt, url, votes: 0 },
       update: { prompt, url },
     })
 

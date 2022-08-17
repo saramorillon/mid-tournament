@@ -1,7 +1,9 @@
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js'
+import { accept } from './commands/accept'
 import { cancel } from './commands/cancel'
 import { close } from './commands/close'
 import { create } from './commands/create'
+import { deleteData } from './commands/delete'
 import { download } from './commands/download'
 import { info } from './commands/info'
 import { register } from './commands/register'
@@ -24,6 +26,14 @@ export const commands: Command[] = [
       .addStringOption((option) => option.setName('end-date').setDescription('End date').setRequired(true))
       .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: create,
+  },
+  {
+    builder: new SlashCommandBuilder().setName('mt-accept').setDescription('Consentir au stockage des données'),
+    execute: accept,
+  },
+  {
+    builder: new SlashCommandBuilder().setName('mt-delete-data').setDescription('Supprimer les données'),
+    execute: deleteData,
   },
   {
     builder: new SlashCommandBuilder()

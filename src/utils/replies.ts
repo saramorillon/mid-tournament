@@ -89,6 +89,26 @@ export function registerError() {
   return embedError().setTitle('Oh non 😿').setDescription("Une erreur s'est produite, empêchant l'inscription au tournoi")
 }
 
+export function acceptSuccess() {
+  return embedSuccess()
+    .setTitle('Félicitations!')
+    .setDescription("Tu as bien accepté les conditions d'utilisation. Tu peux désormais inscire une image avec la commande `/mt-register`")
+}
+
+export function acceptError() {
+  return embedError().setTitle('Oh non 😿').setDescription("Une erreur s'est produite, empêchant l'acceptation des conditions d'utilisation")
+}
+
+export function deleteSuccess() {
+  return embedSuccess()
+    .setTitle('Félicitations!')
+    .setDescription("Tes données ont bien été supprimées. Tu ne peux plus participer aux tournois. Si tu changes d'avis, tu peux à nouveau utiliser la commande `/mt-accept`")
+}
+
+export function deleteError() {
+  return embedError().setTitle('Oh non 😿').setDescription("Une erreur s'est produite, empêchant la suppression de tes données.")
+}
+
 export function downloadSuccess(participations: Participation[]) {
   return embedSuccess().setTitle("C'est partiii !").setDescription(`Waouh, on a eu ${participations.length} participants ! C'est énorme !`)
 }
@@ -130,6 +150,48 @@ export function alreadyRegistered() {
 
 export function noParticipant() {
   return embedWarn().setTitle('Oh non 😿').setDescription("Personne n'a participé au tournoi. Espérons qu'il y ait plus de monde la prochaine fois !")
+}
+
+export function mustAccept() {
+  return embedWarn().setTitle('Oh non 😿').setDescription("Tu n'as pas encore accepté les conditions d'utilisation. Pour ce faire, utilise la commande `/mt-accept`")
+}
+
+export function acceptQuestion() {
+  return embedInfo()
+    .setTitle("Conditions d'utilisation")
+    .setDescription(
+      "Acceptes-tu qu'on stocke ton nom d'utilisateur ? C'est nécessaire pour participer au tournoi. Tu pourras effacer tes données à tout moment avec la commande `/mt-delete-data`"
+    )
+}
+
+export function alreadyAccepted() {
+  return embedInfo()
+    .setTitle('Déjà fait !')
+    .setDescription(
+      "Tu as déjà accepté les conditions d'utilisation. Tu peux inscire une image avec la commande `/mt-register` ou effacer tes données à tout moment avec la commande `/mt-delete-data`"
+    )
+}
+
+export function notAccepted() {
+  return embedInfo()
+    .setTitle('Tant pis...')
+    .setDescription("Ok, ton nom ne sera pas stocké, mais tu ne pourras participer au tournoi. Si tu change d'avis, tu peux à nouveau utiliser la commande `/mt-accept`")
+}
+
+export function deleteQuestion() {
+  return embedInfo()
+    .setTitle("Conditions d'utilisation")
+    .setDescription('Veux-tu supprimer tes données ? Attention, cela supprimera également ta participation au tournoi en cours.')
+}
+
+export function alreadyDeleted() {
+  return embedInfo().setTitle('Déjà fait !').setDescription("Tes données ont déjà été supprimées. Si tu changes d'avis, tu peux à nouveau utiliser la commande `/mt-accept`")
+}
+
+export function notDeleted() {
+  return embedInfo()
+    .setTitle('Ravi que tu reste avec nous !')
+    .setDescription('Ok, tes données seront conservées. Si tu veux les supprimer, tu peux utiliser à tout moment la commande `/mt-delete-data`')
 }
 
 function formatDate(date: Date) {

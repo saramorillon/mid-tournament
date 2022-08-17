@@ -7,6 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+
+  participations Participation[]
+
+  @@map("user")
+}
+
 model Tournament {
   id        Int      @id @default(autoincrement())
   name      String
@@ -21,14 +30,15 @@ model Tournament {
 
 model Participation {
   id           Int    @id @default(autoincrement())
+  userId       Int
   tournamentId Int
-  user         String
   prompt       String
   url          String
   votes        Int
 
+  user       User       @relation(fields: [userId], references: [id])
   tournament Tournament @relation(fields: [tournamentId], references: [id])
 
-  @@unique([tournamentId, user])
+  @@unique([tournamentId, userId])
   @@map("participation")
 }
