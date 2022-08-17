@@ -54,4 +54,4 @@ RUN chown -R node:node /app/db
 
 USER node
 
-CMD ["node", "/app/dist/index.js"]
+CMD ["node", "/app/dist/src/index.js"]
