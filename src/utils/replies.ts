@@ -1,5 +1,5 @@
 import { Participation } from '@prisma/client'
-import { format } from 'date-fns-tz'
+import { format, utcToZonedTime } from 'date-fns-tz'
 import { fr } from 'date-fns/locale'
 import { EmbedBuilder } from 'discord.js'
 
@@ -174,6 +174,6 @@ export function notDeleted() {
   return embedInfo('Ravi que tu reste avec nous !', 'Ok, tes données seront conservées. Si tu veux les supprimer, tu peux utiliser à tout moment la commande `/mt-delete-data`')
 }
 
-function formatDate(date: Date) {
-  return format(date, `dd MMMM yyyy 'à' H'h'mm`, { timeZone: 'Europe/Paris', locale: fr })
+export function formatDate(date: Date) {
+  return format(utcToZonedTime(date, 'Europe/Paris'), `do MMMM yyyy 'à' H'h'mm`, { locale: fr })
 }
