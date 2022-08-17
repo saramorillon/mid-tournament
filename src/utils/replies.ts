@@ -59,8 +59,9 @@ export function cancelError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant l'annulation du tournoi")
 }
 
-export function infoSuccess(tournament: Tournament, participants = 0) {
-  const description = `Il y a pour l'instant ${participants} participants. Tu peux participer jusqu'au ${formatDate(tournament.endDate)}.
+export function infoSuccess(tournament: Tournament, players = 0) {
+  const s = players > 1 ? 's' : ''
+  const description = `Il y a pour l'instant ${players} joueur${s}. Tu peux participer jusqu'au ${formatDate(tournament.endDate)}.
 Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.
 
 ${tournament.description || ''}`.trim()
@@ -108,7 +109,7 @@ export function deleteError() {
 }
 
 export function downloadSuccess(participations: Participation[]) {
-  return embedSuccess("C'est partiii !", `Waouh, on a eu ${participations.length} participants ! C'est énorme !`)
+  return embedSuccess("C'est partiii !", `Waouh, on a eu ${participations.length} joueurs ! C'est énorme !`)
 }
 
 export function downloadError() {
@@ -124,7 +125,7 @@ export function noRunning() {
   return embedInfo("Il n'y a pas de tournoi en cours en ce moment.", "Reste à l'affût, il y en aura peut-être un autre bientôt 😉")
 }
 
-export function infoParticipant(tournament: Tournament, participation: Participation) {
+export function infoPlayer(tournament: Tournament, participation: Participation) {
   const description = `Ton image a bien été inscrite au tournoi.
 Tu peux la modifier jusqu'au ${formatDate(tournament.endDate)} grâce à la commande \`/mt-register\`
 Prompt: \`${participation.prompt}\``
@@ -139,7 +140,7 @@ export function alreadyRegistered() {
   return embedError("C'est pas beau de voler 😠", 'Cette image a déjà été inscrite par un autre utilisateur')
 }
 
-export function noParticipant() {
+export function noPlayer() {
   return embedWarn('Oh non 😿', "Personne n'a participé au tournoi. Espérons qu'il y ait plus de monde la prochaine fois !")
 }
 

@@ -1,6 +1,6 @@
 import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { prisma } from '../prisma'
-import { infoError, infoParticipant, infoSuccess, noRunning } from '../utils/replies'
+import { infoError, infoPlayer, infoSuccess, noRunning } from '../utils/replies'
 
 export async function info(interaction: ButtonInteraction | ChatInputCommandInteraction) {
   await interaction.deferReply({ ephemeral: true })
@@ -20,7 +20,7 @@ export async function info(interaction: ButtonInteraction | ChatInputCommandInte
       return
     }
 
-    await interaction.editReply({ embeds: [infoParticipant(current, participation)] })
+    await interaction.editReply({ embeds: [infoPlayer(current, participation)] })
   } catch (error) {
     console.error(error)
     await interaction.editReply({ embeds: [infoError()] })

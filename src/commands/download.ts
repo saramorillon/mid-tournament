@@ -1,6 +1,6 @@
 import { AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js'
 import { prisma } from '../prisma'
-import { downloadError, downloadSuccess, noParticipant, noRunning } from '../utils/replies'
+import { downloadError, downloadSuccess, noPlayer, noRunning } from '../utils/replies'
 import { zip } from '../utils/zip'
 
 export async function download(interaction: ChatInputCommandInteraction) {
@@ -15,7 +15,7 @@ export async function download(interaction: ChatInputCommandInteraction) {
 
     const participations = await prisma.participation.findMany({ where: { tournamentId: current.id }, include: { user: true } })
     if (!participations.length) {
-      await interaction.editReply({ embeds: [noParticipant()] })
+      await interaction.editReply({ embeds: [noPlayer()] })
       return
     }
 
