@@ -1,26 +1,31 @@
-import { Client, GatewayIntentBits } from 'discord.js'
-import { getCommand } from './commands'
+import { Client, GatewayIntentBits, Interaction } from 'discord.js'
+import { commandsMap } from './commands'
 import { acceptCallback } from './commands/accept'
 import { createCallback } from './commands/create'
 import { deleteDataCallback } from './commands/delete'
 import { logger } from './logger'
 import { settings } from './settings'
 
-export async function startApp() {
-  const client = new Client({ intents: [GatewayIntentBits.Guilds] })
+export class App {
+  async run() {
+    const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
-  client.once('ready', () => {
-    logger.info('Ready!')
-  })
+    client.once('ready', () => {
+      logger.info('Ready!')
+    })
 
-  client.on('interactionCreate', async (interaction) => {
+    client.on('interactionCreate', this.onInteraction.bind(this))
+
+    await client.login(settings.credentials.token)
+  }
+
+  async onInteraction(interaction: Interaction) {
     if (interaction.isChatInputCommand()) {
       const { commandName } = interaction
-      const command = getCommand(commandName)
-      if (!command) {
+      if (!commandsMap[commandName]) {
         await interaction.reply({ content: `Command \`/${commandName}\` does not exist`, ephemeral: true })
       } else {
-        await command.execute(interaction)
+        await commandsMap[commandName].execute(interaction)
       }
     } else if (interaction.isButton()) {
       if (interaction.customId.startsWith('accept')) {
@@ -33,7 +38,5 @@ export async function startApp() {
         await createCallback(interaction)
       }
     }
-  })
-
-  await client.login(settings.credentials.token)
+  }
 }

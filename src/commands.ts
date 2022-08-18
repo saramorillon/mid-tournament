@@ -66,8 +66,7 @@ export const commands: Command[] = [
   },
 ]
 
-const map: Record<string, Command> = commands.reduce((acc, curr) => ({ ...acc, [curr.builder.name]: curr }), {})
-
-export function getCommand(name: string) {
-  return map[name]
-}
+export const commandsMap: Record<string, Command> = commands.reduce(
+  (acc, curr) => ({ ...acc, [curr.builder.name]: curr }),
+  {}
+)
