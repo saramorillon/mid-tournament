@@ -1,8 +1,16 @@
-import mockdate from 'mockdate'
-import { cancelSuccess, closed, closeSuccess, createSuccess, downloadSuccess, formatDate, infoPlayer, infoSuccess, registerSuccess } from '../../../src/utils/replies'
+import {
+  cancelSuccess,
+  closed,
+  closeSuccess,
+  createSuccess,
+  downloadAttachment,
+  downloadSuccess,
+  formatDate,
+  infoPlayer,
+  infoSuccess,
+  registerSuccess,
+} from '../../../src/utils/replies'
 import { mockParticipation, mockTournament } from '../../mocks'
-
-mockdate.set('2022-01-01T00:00:00.000Z')
 
 describe('createSuccess', () => {
   it('should return create success message', () => {
@@ -64,7 +72,8 @@ describe('registerSuccess', () => {
     const result = registerSuccess('name').toJSON()
     expect(result).toEqual({
       color: 8311585,
-      description: 'Cette magnigique image est inscrite au tournoi "name".\nTu peux changer l\'image inscrite en appelant à nouveau la commande `/mt-register`',
+      description:
+        'Cette magnigique image est inscrite au tournoi "name".\nTu peux changer l\'image inscrite en appelant à nouveau la commande `/mt-register`',
       title: 'Félicitations!',
     })
   })
@@ -86,7 +95,8 @@ describe('infoPlayer', () => {
     const result = infoPlayer(mockTournament(), mockParticipation()).toJSON()
     expect(result).toEqual({
       color: 4886754,
-      description: "Ton image a bien été inscrite au tournoi.\nTu peux la modifier jusqu'au 1 janvier 2023 à 1h00 grâce à la commande `/mt-register`\nPrompt: `prompt`",
+      description:
+        "Ton image a bien été inscrite au tournoi.\nTu peux la modifier jusqu'au 1 janvier 2023 à 1h00 grâce à la commande `/mt-register`\nPrompt: `prompt`",
       image: { url: 'http://url.com' },
       title: 'Bienvenue au tournoi "name" !',
     })
@@ -100,6 +110,16 @@ describe('closed', () => {
       color: 16766982,
       description: 'Le tournoi "name" n\'accepte plus d\'inscriptions depuis le 1 janvier 2023 à 1h00',
       title: 'Oh non 😿',
+    })
+  })
+})
+
+describe('downloadAttachment', () => {
+  it('should return closed message', () => {
+    const result = downloadAttachment('name', Buffer.from([])).toJSON()
+    expect(result).toEqual({
+      name: 'name.zip',
+      attachment: { data: [], type: 'Buffer' },
     })
   })
 })
