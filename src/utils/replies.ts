@@ -3,6 +3,7 @@ import { format, utcToZonedTime } from 'date-fns-tz'
 import { fr } from 'date-fns/locale'
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
@@ -245,6 +246,10 @@ export function notDeleted() {
   const description =
     'Ok, tes données seront conservées. Si tu veux les supprimer, tu peux utiliser à tout moment la commande `/mt-delete-data`'
   return embedInfo('Ravi que tu reste avec nous !', description)
+}
+
+export function downloadAttachment(name: string, archive: Buffer) {
+  return new AttachmentBuilder(archive).setName(`${name}.zip`)
 }
 
 export function formatDate(date: Date) {

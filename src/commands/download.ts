@@ -1,7 +1,7 @@
-import { AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { downloadError, downloadSuccess, noPlayer, noRunning } from '../utils/replies'
+import { downloadAttachment, downloadError, downloadSuccess, noPlayer, noRunning } from '../utils/replies'
 import { zip } from '../utils/zip'
 
 export async function download(interaction: ChatInputCommandInteraction) {
@@ -20,8 +20,10 @@ export async function download(interaction: ChatInputCommandInteraction) {
         await interaction.editReply({ embeds: [noPlayer()] })
       } else {
         const archive = await zip(participations)
-        const file = new AttachmentBuilder(archive).setName(`${current.name}.zip`)
-        await interaction.editReply({ embeds: [downloadSuccess(participations)], files: [file] })
+        await interaction.editReply({
+          embeds: [downloadSuccess(participations)],
+          files: [downloadAttachment(current.name, archive)],
+        })
       }
     }
     action.success()
