@@ -1,5 +1,8 @@
 {
-  "extends": ["@mini-utils/eslint-config-typescript", "@mini-utils/eslint-config-typescript/jest"],
+  "extends": ["@saramorillon/eslint-config-typescript", "@saramorillon/eslint-config-typescript/jest"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "rules": {
     "import/no-named-as-default-member": "off",
     "import/default": "off"
