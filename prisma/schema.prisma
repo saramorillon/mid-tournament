@@ -37,8 +37,8 @@ model Participation {
   url          String
   votes        Int
 
-  user       User       @relation(fields: [userId], references: [id])
-  tournament Tournament @relation(fields: [tournamentId], references: [id])
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([tournamentId, userId])
   @@map("participation")
