@@ -36,6 +36,10 @@ export function missingEndDate() {
   return embedError('Paramètre invalide', 'Le tournoi doit avoir une endDate')
 }
 
+export function missingDescription() {
+  return embedError('Paramètre invalide', 'Le tournoi doit avoir une description')
+}
+
 export function invalidEndDateFormat() {
   const description = "La endDate n'est pas valide. Elle doit respecter le format suivant: JJ/MM/AAAA hh:mm"
   return embedError('Paramètre invalide', description)
@@ -79,7 +83,7 @@ export function infoSuccess(tournament: Tournament, players = 0) {
   const description = `Il y a pour l'instant ${players} joueur${s}. Tu peux participer jusqu'au ${endDate}.
 Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.
 
-${tournament.description || ''}`.trim()
+${tournament.description}`
   return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description)
 }
 

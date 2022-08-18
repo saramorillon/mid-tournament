@@ -11,6 +11,7 @@ import {
   infoSuccess,
   invalidEndDateFormat,
   invalidEndDateValue,
+  missingDescription,
   missingEndDate,
   missingName,
 } from '../utils/replies'
@@ -49,10 +50,14 @@ export async function createCallback(interaction: ModalSubmitInteraction) {
         } else if (!isAfter(endDate, new Date())) {
           await interaction.editReply({ embeds: [invalidEndDateValue()] })
         } else {
-          const description = interaction.fields.getTextInputValue('description') || null
-          const tournament = await prisma.tournament.create({ data: { name, endDate, description, running: true } })
-          await interaction.editReply({ embeds: [createSuccess(name)] })
-          await interaction.followUp({ embeds: [infoSuccess(tournament)] })
+          const description = interaction.fields.getTextInputValue('description')
+          if (!description) {
+            await interaction.editReply({ embeds: [missingDescription()] })
+          } else {
+            const tournament = await prisma.tournament.create({ data: { name, endDate, description, running: true } })
+            await interaction.editReply({ embeds: [createSuccess(name)] })
+            await interaction.followUp({ embeds: [infoSuccess(tournament)] })
+          }
         }
       }
     }

@@ -22,7 +22,7 @@ model Tournament {
   startDate   DateTime @default(now())
   endDate     DateTime
   running     Boolean
-  description String?  @db.Text
+  description String   @db.Text
 
   participations Participation[]
 
