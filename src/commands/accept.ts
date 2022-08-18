@@ -1,7 +1,14 @@
 import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { acceptButtons, acceptError, acceptQuestion, acceptSuccess, alreadyAccepted, notAccepted } from '../utils/replies'
+import {
+  acceptButtons,
+  acceptError,
+  acceptQuestion,
+  acceptSuccess,
+  alreadyAccepted,
+  notAccepted,
+} from '../utils/replies'
 
 export async function accept(interaction: ChatInputCommandInteraction) {
   const action = logger.start('accept')

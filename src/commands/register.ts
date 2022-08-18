@@ -2,7 +2,17 @@ import { isBefore } from 'date-fns'
 import { ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { alreadyRegistered, closed, invalidUrl, missingPrompt, missingUrl, mustAccept, noRunning, registerError, registerSuccess } from '../utils/replies'
+import {
+  alreadyRegistered,
+  closed,
+  invalidUrl,
+  missingPrompt,
+  missingUrl,
+  mustAccept,
+  noRunning,
+  registerError,
+  registerSuccess,
+} from '../utils/replies'
 
 export async function register(interaction: ChatInputCommandInteraction) {
   const action = logger.start('register')
@@ -26,10 +36,13 @@ export async function register(interaction: ChatInputCommandInteraction) {
           const url = interaction.options.getString('url')
           if (!url) {
             await interaction.editReply({ embeds: [missingUrl()] })
-          } else if (!isUrlValid) {
+          } else if (!isUrlValid(url)) {
             await interaction.editReply({ embeds: [invalidUrl()] })
           } else {
-            const existingUrl = await prisma.participation.findFirst({ where: { tournamentId: current.id, url }, include: { user: true } })
+            const existingUrl = await prisma.participation.findFirst({
+              where: { tournamentId: current.id, url },
+              include: { user: true },
+            })
             if (existingUrl && existingUrl.user.username !== user.username) {
               await interaction.editReply({ embeds: [alreadyRegistered()] })
             } else {

@@ -1,7 +1,15 @@
 import { Participation, Tournament } from '@prisma/client'
 import { format, utcToZonedTime } from 'date-fns-tz'
 import { fr } from 'date-fns/locale'
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js'
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+} from 'discord.js'
 
 function embedError(title: string, description: string) {
   return new EmbedBuilder().setColor(0xff3366).setTitle(title).setDescription(description)
@@ -28,7 +36,8 @@ export function missingEndDate() {
 }
 
 export function invalidEndDateFormat() {
-  return embedError('Paramètre invalide', "La endDate n'est pas valide. Elle doit respecter le format suivant: JJ/MM/AAAA hh:mm")
+  const description = "La endDate n'est pas valide. Elle doit respecter le format suivant: JJ/MM/AAAA hh:mm"
+  return embedError('Paramètre invalide', description)
 }
 
 export function invalidEndDateValue() {
@@ -65,7 +74,8 @@ export function cancelError() {
 
 export function infoSuccess(tournament: Tournament, players = 0) {
   const s = players > 1 ? 's' : ''
-  const description = `Il y a pour l'instant ${players} joueur${s}. Tu peux participer jusqu'au ${formatDate(tournament.endDate)}.
+  const endDate = formatDate(tournament.endDate)
+  const description = `Il y a pour l'instant ${players} joueur${s}. Tu peux participer jusqu'au ${endDate}.
 Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.
 
 ${tournament.description || ''}`.trim()
@@ -95,7 +105,9 @@ export function registerError() {
 }
 
 export function acceptSuccess() {
-  return embedSuccess('Félicitations!', "Tu as bien accepté les conditions d'utilisation. Tu peux désormais inscire une image avec la commande `/mt-register`")
+  const description =
+    "Tu as bien accepté les conditions d'utilisation. Tu peux désormais inscire une image avec la commande `/mt-register`"
+  return embedSuccess('Félicitations!', description)
 }
 
 export function acceptError() {
@@ -121,14 +133,24 @@ export function downloadError() {
 }
 
 export function alreadyRunning() {
-  const description = 'Tu peux utiliser la commande `/mt-cancel` pour annuler le tournoi en cours, ou la commande `/mt-info` pour avoir des informations.'
+  const description =
+    'Tu peux utiliser la commande `/mt-cancel` pour annuler le tournoi en cours, ou la commande `/mt-info` pour avoir des informations.'
   return embedWarn('Il y a déjà un tournoi en cours', description)
 }
 
 export function createModal() {
   const name = new TextInputBuilder().setCustomId('name').setLabel('Nom').setStyle(TextInputStyle.Short).setRequired()
-  const endDate = new TextInputBuilder().setCustomId('endDate').setLabel('Date de fin').setStyle(TextInputStyle.Short).setRequired().setPlaceholder('dd/mm/aaaa hh:mm')
-  const description = new TextInputBuilder().setCustomId('description').setLabel('Description').setStyle(TextInputStyle.Paragraph).setRequired(false)
+  const endDate = new TextInputBuilder()
+    .setCustomId('endDate')
+    .setLabel('Date de fin')
+    .setStyle(TextInputStyle.Short)
+    .setRequired()
+    .setPlaceholder('dd/mm/aaaa hh:mm')
+  const description = new TextInputBuilder()
+    .setCustomId('description')
+    .setLabel('Description')
+    .setStyle(TextInputStyle.Paragraph)
+    .setRequired(false)
 
   return new ModalBuilder()
     .setCustomId('create')
@@ -141,7 +163,10 @@ export function createModal() {
 }
 
 export function noRunning() {
-  return embedInfo("Il n'y a pas de tournoi en cours en ce moment.", "Reste à l'affût, il y en aura peut-être un autre bientôt 😉")
+  return embedInfo(
+    "Il n'y a pas de tournoi en cours en ce moment.",
+    "Reste à l'affût, il y en aura peut-être un autre bientôt 😉"
+  )
 }
 
 export function infoPlayer(tournament: Tournament, participation: Participation) {
@@ -152,7 +177,9 @@ Prompt: \`${participation.prompt}\``
 }
 
 export function closed(tournament: Tournament) {
-  return embedWarn('Oh non 😿', `Le tournoi "${tournament.name}" n'accepte plus d'inscriptions depuis le ${formatDate(tournament.endDate)}`)
+  const endDate = formatDate(tournament.endDate)
+  const description = `Le tournoi "${tournament.name}" n'accepte plus d'inscriptions depuis le ${endDate}`
+  return embedWarn('Oh non 😿', description)
 }
 
 export function alreadyRegistered() {
@@ -160,11 +187,14 @@ export function alreadyRegistered() {
 }
 
 export function noPlayer() {
-  return embedWarn('Oh non 😿', "Personne n'a participé au tournoi. Espérons qu'il y ait plus de monde la prochaine fois !")
+  const description = "Personne n'a participé au tournoi. Espérons qu'il y ait plus de monde la prochaine fois !"
+  return embedWarn('Oh non 😿', description)
 }
 
 export function mustAccept() {
-  return embedWarn('Oh non 😿', "Tu n'as pas encore accepté les conditions d'utilisation. Pour ce faire, utilise la commande `/mt-accept`")
+  const description =
+    "Tu n'as pas encore accepté les conditions d'utilisation. Pour ce faire, utilise la commande `/mt-accept`"
+  return embedWarn('Oh non 😿', description)
 }
 
 export function acceptQuestion() {
@@ -187,12 +217,15 @@ Tu peux inscire une image avec la commande \`/mt-register\` ou effacer tes donn�
 }
 
 export function notAccepted() {
-  const description = "Ok, ton nom ne sera pas stocké, mais tu ne pourras participer au tournoi. Si tu change d'avis, tu peux à nouveau utiliser la commande `/mt-accept`"
+  const description =
+    "Ok, ton nom ne sera pas stocké, mais tu ne pourras participer au tournoi. Si tu change d'avis, tu peux à nouveau utiliser la commande `/mt-accept`"
   return embedInfo('Tant pis...', description)
 }
 
 export function deleteQuestion() {
-  return embedInfo("Conditions d'utilisation", 'Veux-tu supprimer tes données ? Attention, cela supprimera également ta participation au tournoi en cours.')
+  const description =
+    'Veux-tu supprimer tes données ? Attention, cela supprimera également ta participation au tournoi en cours.'
+  return embedInfo("Conditions d'utilisation", description)
 }
 
 export function deleteButtons() {
@@ -203,11 +236,15 @@ export function deleteButtons() {
 }
 
 export function alreadyDeleted() {
-  return embedInfo('Déjà fait !', "Tes données ont déjà été supprimées. Si tu changes d'avis, tu peux à nouveau utiliser la commande `/mt-accept`")
+  const description =
+    "Tes données ont déjà été supprimées. Si tu changes d'avis, tu peux à nouveau utiliser la commande `/mt-accept`"
+  return embedInfo('Déjà fait !', description)
 }
 
 export function notDeleted() {
-  return embedInfo('Ravi que tu reste avec nous !', 'Ok, tes données seront conservées. Si tu veux les supprimer, tu peux utiliser à tout moment la commande `/mt-delete-data`')
+  const description =
+    'Ok, tes données seront conservées. Si tu veux les supprimer, tu peux utiliser à tout moment la commande `/mt-delete-data`'
+  return embedInfo('Ravi que tu reste avec nous !', description)
 }
 
 export function formatDate(date: Date) {

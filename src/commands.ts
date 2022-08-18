@@ -15,11 +15,16 @@ type Command = {
 
 export const commands: Command[] = [
   {
-    builder: new SlashCommandBuilder().setName('mt-info').setDescription('Afficher les informations à propos du tournoi en cours'),
+    builder: new SlashCommandBuilder()
+      .setName('mt-info')
+      .setDescription('Afficher les informations à propos du tournoi en cours'),
     execute: info,
   },
   {
-    builder: new SlashCommandBuilder().setName('mt-create').setDescription('Créer un nouveau tournoi').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    builder: new SlashCommandBuilder()
+      .setName('mt-create')
+      .setDescription('Créer un nouveau tournoi')
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: create,
   },
   {
@@ -39,11 +44,17 @@ export const commands: Command[] = [
     execute: register,
   },
   {
-    builder: new SlashCommandBuilder().setName('mt-close').setDescription('Clôturer les inscriptions au tournoi').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    builder: new SlashCommandBuilder()
+      .setName('mt-close')
+      .setDescription('Clôturer les inscriptions au tournoi')
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: close,
   },
   {
-    builder: new SlashCommandBuilder().setName('mt-cancel').setDescription('Annuler le tournoi').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    builder: new SlashCommandBuilder()
+      .setName('mt-cancel')
+      .setDescription('Annuler le tournoi')
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: cancel,
   },
   {

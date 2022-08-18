@@ -12,12 +12,16 @@ export async function download(interaction: ChatInputCommandInteraction) {
     if (!current) {
       await interaction.editReply({ embeds: [noRunning()] })
     } else {
-      const participations = await prisma.participation.findMany({ where: { tournamentId: current.id }, include: { user: true } })
+      const participations = await prisma.participation.findMany({
+        where: { tournamentId: current.id },
+        include: { user: true },
+      })
       if (!participations.length) {
         await interaction.editReply({ embeds: [noPlayer()] })
       } else {
         const archive = await zip(participations)
-        await interaction.editReply({ embeds: [downloadSuccess(participations)], files: [new AttachmentBuilder(archive).setName(`${current.name}.zip`)] })
+        const file = new AttachmentBuilder(archive).setName(`${current.name}.zip`)
+        await interaction.editReply({ embeds: [downloadSuccess(participations)], files: [file] })
       }
     }
     action.success()

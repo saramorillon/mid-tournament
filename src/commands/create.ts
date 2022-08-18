@@ -3,7 +3,17 @@ import { zonedTimeToUtc } from 'date-fns-tz'
 import { ChatInputCommandInteraction, ModalSubmitInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { alreadyRunning, createError, createModal, createSuccess, infoSuccess, invalidEndDateFormat, invalidEndDateValue, missingEndDate, missingName } from '../utils/replies'
+import {
+  alreadyRunning,
+  createError,
+  createModal,
+  createSuccess,
+  infoSuccess,
+  invalidEndDateFormat,
+  invalidEndDateValue,
+  missingEndDate,
+  missingName,
+} from '../utils/replies'
 
 export async function create(interaction: ChatInputCommandInteraction) {
   const action = logger.start('create')
@@ -29,18 +39,18 @@ export async function createCallback(interaction: ModalSubmitInteraction) {
     if (!name) {
       await interaction.editReply({ embeds: [missingName()] })
     } else {
-      const endDate = interaction.fields.getTextInputValue('endDate')
-      if (!endDate) {
+      const strDate = interaction.fields.getTextInputValue('endDate')
+      if (!strDate) {
         await interaction.editReply({ embeds: [missingEndDate()] })
       } else {
-        const parsedDate = zonedTimeToUtc(parse(endDate, 'dd/MM/yyyy HH:mm', new Date()), 'Europe/Paris')
-        if (isNaN(parsedDate.getTime())) {
+        const endDate = zonedTimeToUtc(parse(strDate, 'dd/MM/yyyy HH:mm', new Date()), 'Europe/Paris')
+        if (isNaN(endDate.getTime())) {
           await interaction.editReply({ embeds: [invalidEndDateFormat()] })
-        } else if (!isAfter(parsedDate, new Date())) {
+        } else if (!isAfter(endDate, new Date())) {
           await interaction.editReply({ embeds: [invalidEndDateValue()] })
         } else {
           const description = interaction.fields.getTextInputValue('description') || null
-          const tournament = await prisma.tournament.create({ data: { name, endDate: parsedDate, description, running: true } })
+          const tournament = await prisma.tournament.create({ data: { name, endDate, description, running: true } })
           await interaction.editReply({ embeds: [createSuccess(name)] })
           await interaction.followUp({ embeds: [infoSuccess(tournament)] })
         }
