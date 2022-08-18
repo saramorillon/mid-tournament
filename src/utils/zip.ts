@@ -14,7 +14,6 @@ async function generateArchive(participations: (Participation & { user: User })[
 
   archive.on('data', (chunk) => chunks.push(chunk))
   archive.on('end', () => {
-    console.log(chunks)
     const buffer = Buffer.concat(chunks)
     resolve(buffer)
   })
