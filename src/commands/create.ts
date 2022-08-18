@@ -1,9 +1,9 @@
 import { isAfter, parse } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
-import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle } from 'discord.js'
+import { ChatInputCommandInteraction, ModalSubmitInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { alreadyRunning, createError, createSuccess, infoSuccess, invalidEndDateFormat, invalidEndDateValue, missingEndDate, missingName } from '../utils/replies'
+import { alreadyRunning, createError, createModal, createSuccess, infoSuccess, invalidEndDateFormat, invalidEndDateValue, missingEndDate, missingName } from '../utils/replies'
 
 export async function create(interaction: ChatInputCommandInteraction) {
   const action = logger.start('create')
@@ -12,19 +12,7 @@ export async function create(interaction: ChatInputCommandInteraction) {
     if (lastTournament) {
       await interaction.reply({ embeds: [alreadyRunning()], ephemeral: true })
     } else {
-      const name = new TextInputBuilder().setCustomId('name').setLabel('Nom').setStyle(TextInputStyle.Short).setRequired()
-      const endDate = new TextInputBuilder().setCustomId('endDate').setLabel('Date de fin').setStyle(TextInputStyle.Short).setRequired().setPlaceholder('dd/mm/aaaa hh:mm')
-      const description = new TextInputBuilder().setCustomId('description').setLabel('Description').setStyle(TextInputStyle.Paragraph).setRequired(false)
-      await interaction.showModal(
-        new ModalBuilder()
-          .setCustomId('create')
-          .setTitle('Créer un tournoi')
-          .setComponents(
-            new ActionRowBuilder<TextInputBuilder>().addComponents(name),
-            new ActionRowBuilder<TextInputBuilder>().addComponents(endDate),
-            new ActionRowBuilder<TextInputBuilder>().addComponents(description)
-          )
-      )
+      await interaction.showModal(createModal())
     }
     action.success()
   } catch (error) {

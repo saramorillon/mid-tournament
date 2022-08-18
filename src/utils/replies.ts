@@ -1,7 +1,7 @@
 import { Participation, Tournament } from '@prisma/client'
 import { format, utcToZonedTime } from 'date-fns-tz'
 import { fr } from 'date-fns/locale'
-import { EmbedBuilder } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js'
 
 function embedError(title: string, description: string) {
   return new EmbedBuilder().setColor(0xff3366).setTitle(title).setDescription(description)
@@ -125,6 +125,21 @@ export function alreadyRunning() {
   return embedWarn('Il y a déjà un tournoi en cours', description)
 }
 
+export function createModal() {
+  const name = new TextInputBuilder().setCustomId('name').setLabel('Nom').setStyle(TextInputStyle.Short).setRequired()
+  const endDate = new TextInputBuilder().setCustomId('endDate').setLabel('Date de fin').setStyle(TextInputStyle.Short).setRequired().setPlaceholder('dd/mm/aaaa hh:mm')
+  const description = new TextInputBuilder().setCustomId('description').setLabel('Description').setStyle(TextInputStyle.Paragraph).setRequired(false)
+
+  return new ModalBuilder()
+    .setCustomId('create')
+    .setTitle('Créer un tournoi')
+    .setComponents(
+      new ActionRowBuilder<TextInputBuilder>().addComponents(name),
+      new ActionRowBuilder<TextInputBuilder>().addComponents(endDate),
+      new ActionRowBuilder<TextInputBuilder>().addComponents(description)
+    )
+}
+
 export function noRunning() {
   return embedInfo("Il n'y a pas de tournoi en cours en ce moment.", "Reste à l'affût, il y en aura peut-être un autre bientôt 😉")
 }
@@ -158,6 +173,13 @@ Tu pourras effacer tes données à tout moment avec la commande \`/mt-delete-dat
   return embedInfo("Conditions d'utilisation", description)
 }
 
+export function acceptButtons() {
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder().setCustomId('accept-yes').setLabel('Oui !').setStyle(ButtonStyle.Primary),
+    new ButtonBuilder().setCustomId('accept-no').setLabel('Non !').setStyle(ButtonStyle.Danger)
+  )
+}
+
 export function alreadyAccepted() {
   const description = `Tu as déjà accepté les conditions d'utilisation.
 Tu peux inscire une image avec la commande \`/mt-register\` ou effacer tes données à tout moment avec la commande \`/mt-delete-data\``
@@ -171,6 +193,13 @@ export function notAccepted() {
 
 export function deleteQuestion() {
   return embedInfo("Conditions d'utilisation", 'Veux-tu supprimer tes données ? Attention, cela supprimera également ta participation au tournoi en cours.')
+}
+
+export function deleteButtons() {
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder().setCustomId('delete-yes').setLabel('Oui !').setStyle(ButtonStyle.Primary),
+    new ButtonBuilder().setCustomId('delete-no').setLabel('Non !').setStyle(ButtonStyle.Danger)
+  )
 }
 
 export function alreadyDeleted() {

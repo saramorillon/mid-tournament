@@ -1,7 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction } from 'discord.js'
+import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { acceptError, acceptQuestion, acceptSuccess, alreadyAccepted, notAccepted } from '../utils/replies'
+import { acceptButtons, acceptError, acceptQuestion, acceptSuccess, alreadyAccepted, notAccepted } from '../utils/replies'
 
 export async function accept(interaction: ChatInputCommandInteraction) {
   const action = logger.start('accept')
@@ -9,22 +9,14 @@ export async function accept(interaction: ChatInputCommandInteraction) {
   try {
     const user = await prisma.user.findUnique({ where: { username: interaction.user.username } })
     if (user) {
-      await interaction.editReply({ embeds: [alreadyAccepted()], components: [] })
+      await interaction.editReply({ embeds: [alreadyAccepted()] })
     } else {
-      await interaction.editReply({
-        embeds: [acceptQuestion()],
-        components: [
-          new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder().setCustomId('accept-yes').setLabel('Oui !').setStyle(ButtonStyle.Primary),
-            new ButtonBuilder().setCustomId('accept-no').setLabel('Non !').setStyle(ButtonStyle.Danger)
-          ),
-        ],
-      })
+      await interaction.editReply({ embeds: [acceptQuestion()], components: [acceptButtons()] })
     }
     action.success()
   } catch (error) {
     action.error(error)
-    await interaction.editReply({ embeds: [acceptError()], components: [] })
+    await interaction.editReply({ embeds: [acceptError()] })
   }
 }
 

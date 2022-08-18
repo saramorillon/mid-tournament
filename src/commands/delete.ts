@@ -1,7 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction } from 'discord.js'
+import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { alreadyDeleted, deleteError, deleteQuestion, deleteSuccess, notDeleted } from '../utils/replies'
+import { alreadyDeleted, deleteButtons, deleteError, deleteQuestion, deleteSuccess, notDeleted } from '../utils/replies'
 
 export async function deleteData(interaction: ChatInputCommandInteraction) {
   const action = logger.start('delete_data')
@@ -9,22 +9,14 @@ export async function deleteData(interaction: ChatInputCommandInteraction) {
   try {
     const user = await prisma.user.findUnique({ where: { username: interaction.user.username } })
     if (!user) {
-      await interaction.editReply({ embeds: [alreadyDeleted()], components: [] })
+      await interaction.editReply({ embeds: [alreadyDeleted()] })
     } else {
-      await interaction.editReply({
-        embeds: [deleteQuestion()],
-        components: [
-          new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder().setCustomId('delete-yes').setLabel('Oui !').setStyle(ButtonStyle.Primary),
-            new ButtonBuilder().setCustomId('delete-no').setLabel('Non !').setStyle(ButtonStyle.Danger)
-          ),
-        ],
-      })
+      await interaction.editReply({ embeds: [deleteQuestion()], components: [deleteButtons()] })
     }
     action.success()
   } catch (error) {
     action.error(error)
-    await interaction.editReply({ embeds: [deleteError()], components: [] })
+    await interaction.editReply({ embeds: [deleteError()] })
   }
 }
 
