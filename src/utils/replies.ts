@@ -43,6 +43,10 @@ export function missingUrl() {
   return embedError('Paramètre invalide', "Il manque l'url vers l'image")
 }
 
+export function invalidUrl() {
+  return embedError('Paramètre invalide', "L'url doit être une url valide")
+}
+
 export function createSuccess(name: string) {
   return embedSuccess('Félicitations!', `Le tournoi "${name}" a bien été créé 👍`)
 }
