@@ -33,9 +33,9 @@ model Participation {
   id           Int    @id @default(autoincrement())
   userId       Int
   tournamentId Int
-  prompt       String
-  url          String
   votes        Int
+  url          String
+  prompt       String @db.Text
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
