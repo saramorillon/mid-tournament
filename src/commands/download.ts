@@ -1,28 +1,28 @@
 import { AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js'
+import { logger } from '../logger'
 import { prisma } from '../prisma'
 import { downloadError, downloadSuccess, noPlayer, noRunning } from '../utils/replies'
 import { zip } from '../utils/zip'
 
 export async function download(interaction: ChatInputCommandInteraction) {
+  const action = logger.start('download')
   await interaction.deferReply({ ephemeral: true })
-
   try {
     const current = await prisma.tournament.findFirst({ where: { running: true } })
     if (!current) {
       await interaction.editReply({ embeds: [noRunning()] })
-      return
+    } else {
+      const participations = await prisma.participation.findMany({ where: { tournamentId: current.id }, include: { user: true } })
+      if (!participations.length) {
+        await interaction.editReply({ embeds: [noPlayer()] })
+      } else {
+        const archive = await zip(participations)
+        await interaction.editReply({ embeds: [downloadSuccess(participations)], files: [new AttachmentBuilder(archive).setName(`${current.name}.zip`)] })
+      }
     }
-
-    const participations = await prisma.participation.findMany({ where: { tournamentId: current.id }, include: { user: true } })
-    if (!participations.length) {
-      await interaction.editReply({ embeds: [noPlayer()] })
-      return
-    }
-
-    const archive = await zip(participations)
-    await interaction.editReply({ embeds: [downloadSuccess(participations)], files: [new AttachmentBuilder(archive).setName(`${current.name}.zip`)] })
+    action.success()
   } catch (error) {
-    console.error(error)
+    action.error(error)
     await interaction.editReply({ embeds: [downloadError()] })
   }
 }
