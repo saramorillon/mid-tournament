@@ -34,6 +34,7 @@ FROM sources as build
 COPY tsconfig.json .
 COPY tsconfig.build.json .
 COPY src/ src/
+COPY commands/ commands/
 
 RUN yarn build
 
