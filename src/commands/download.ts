@@ -14,6 +14,7 @@ export async function download(interaction: ChatInputCommandInteraction) {
     } else {
       const participations = await prisma.participation.findMany({
         where: { tournamentId: current.id },
+        orderBy: { user: { username: 'asc' } },
         include: { user: true },
       })
       if (!participations.length) {
