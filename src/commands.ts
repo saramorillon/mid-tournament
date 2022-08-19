@@ -5,6 +5,7 @@ import { close } from './commands/close'
 import { create } from './commands/create'
 import { deleteData } from './commands/delete'
 import { download } from './commands/download'
+import { help } from './commands/help'
 import { info } from './commands/info'
 import { register } from './commands/register'
 
@@ -14,6 +15,10 @@ type Command = {
 }
 
 export const commands: Command[] = [
+  {
+    builder: new SlashCommandBuilder().setName('mt-help').setDescription("Afficher l'aide"),
+    execute: help,
+  },
   {
     builder: new SlashCommandBuilder()
       .setName('mt-info')

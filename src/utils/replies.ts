@@ -77,6 +77,47 @@ export function cancelError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant l'annulation du tournoi")
 }
 
+export function helpSuccess(admin = false) {
+  const help = `\`/mt-help\`
+Cette commande permet d'afficher ce message d'aide.
+  
+\`/mt-info\`
+Cette commande permet d'afficher des informations concernant le tournoi en cours et ta participation.
+  
+\`/mt-accept\`
+Cette commande permet d'accepter les conditions d'utilisation. Il est nécessaire de l'utiliser une fois pour pourquoi participer aux différents tournois.
+  
+\`/mt-delete-data\`
+Cette commande permet de supprimer tes informations (nom d'utilisateur) qui sont stockées sur mon serveur. Attention, cela supprime également toutes tes participations à tous les tournois.
+  
+\`/mt-register\`
+Cette commande permet de participer au tournoi en cours, en fournissant le prompt utilisé et l'url vers image générée.`
+
+  const adminHelp = `
+
+**Commandes administrateurs**
+
+\`/mt-create\`
+Cette commande permet de créer un nouveau tournoi en renseignant : le nom, la date de fin et une description.
+  
+\`/mt-cancel\`
+Cette commande permet d'annuler le tournoi en cours.
+  
+\`/mt-close\`
+Cette commande permet de clôturer les inscriptions au tournoi en cours. Sinon, elles seront automatiquement clôturées à la date indiquée lors de la création.
+  
+\`/mt-download\`
+Cette commande permet de télécharger toutes les images inscrites au tournoi. Chaque image est nommée avec le nom de l'utilisateur discord qui l'a postée. Un fichier "promptoscope.csv" est joint au téléchargement. Il contient la liste des joueurs avec leur prompt et l'url postée.
+*Note: les fichiers ".csv" s'ouvrent avec un tableur comme excel ou ses alternatives gratuites. Il peut également s'ouvrir avec un bloc note.*
+
+`
+  return embedInfo('Aide', help + (admin ? adminHelp : ''))
+}
+
+export function helpError() {
+  return embedError('Oh non 😿', "Une erreur s'est produite, empêchant d'afficher l'aide")
+}
+
 export function infoSuccess(tournament: Tournament, players = 0) {
   const s = players > 1 ? 's' : ''
   const endDate = formatDate(tournament.endDate)

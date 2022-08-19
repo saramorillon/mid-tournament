@@ -6,6 +6,7 @@ import {
   downloadAttachment,
   downloadSuccess,
   formatDate,
+  helpSuccess,
   infoPlayer,
   infoSuccess,
   registerSuccess,
@@ -30,6 +31,26 @@ describe('cancelSuccess', () => {
       color: 8311585,
       description: 'Le tournoi "name" a bien été annulé 👍',
       title: 'Félicitations!',
+    })
+  })
+})
+
+describe('helpSuccess', () => {
+  it('should return help success message', () => {
+    const result = helpSuccess().toJSON()
+    expect(result).toEqual({
+      color: 4886754,
+      description: expect.not.stringContaining('mt-create'),
+      title: 'Aide',
+    })
+  })
+
+  it('should return help success message for admin', () => {
+    const result = helpSuccess(true).toJSON()
+    expect(result).toEqual({
+      color: 4886754,
+      description: expect.stringContaining('mt-create'),
+      title: 'Aide',
     })
   })
 })

@@ -3,7 +3,7 @@ import { prisma } from '../../../src/prisma'
 import { infoError, infoPlayer, infoSuccess, noRunning } from '../../../src/utils/replies'
 import { mockChatInteraction, mockParticipation, mockTournament, mockTournamentWithCount } from '../../mocks'
 
-describe('download', () => {
+describe('info', () => {
   beforeEach(() => {
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(null)
     jest.spyOn(prisma.participation, 'findFirst').mockResolvedValue(null)
