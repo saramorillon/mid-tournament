@@ -5,11 +5,13 @@ const env = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'test', 'production'] }),
   TOKEN: str(),
   CLIENT_ID: str(),
+  GUILD_ID: str(),
 })
 
 export const settings = {
   app: { name, version, env: env.NODE_ENV },
   credentials: {
+    guildId: env.GUILD_ID,
     clientId: env.CLIENT_ID,
     token: env.TOKEN,
   },
