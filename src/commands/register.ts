@@ -9,6 +9,7 @@ import {
   missingPrompt,
   missingUrl,
   mustAccept,
+  newPlayer,
   noRunning,
   registerError,
   registerSuccess,
@@ -46,12 +47,13 @@ export async function register(interaction: ChatInputCommandInteraction) {
             if (existingUrl && existingUrl.user.username !== user.username) {
               await interaction.editReply({ embeds: [alreadyRegistered()] })
             } else {
-              await prisma.participation.upsert({
+              const participation = await prisma.participation.upsert({
                 where: { tournamentId_userId: { tournamentId: current.id, userId: user.id } },
                 create: { tournamentId: current.id, userId: user.id, prompt, url, votes: 0 },
                 update: { prompt, url },
               })
-              await interaction.editReply({ embeds: [registerSuccess(current.name)] })
+              await interaction.editReply({ embeds: [registerSuccess(current.name, participation)] })
+              await interaction.followUp({ embeds: [newPlayer(interaction.user, current.name)] })
             }
           }
         }

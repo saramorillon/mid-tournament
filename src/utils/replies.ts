@@ -10,6 +10,7 @@ import {
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle,
+  User,
 } from 'discord.js'
 
 function embedError(title: string, description: string) {
@@ -171,10 +172,12 @@ export function closeError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant de clôturer les inscriptions au tournoi")
 }
 
-export function registerSuccess(name: string) {
+export function registerSuccess(name: string, participation: Participation) {
   const description = `Cette magnigique image est inscrite au tournoi "${name}".
-Tu peux changer l'image inscrite en appelant à nouveau la commande \`/mt-register\``
-  return embedSuccess('Félicitations!', description)
+Tu peux modifier ton image grâce à la commande \`/mt-register\`.
+
+**Prompt** : \`${participation.prompt}\``
+  return embedSuccess('Félicitations!', description).setImage(participation.url)
 }
 
 export function registerError() {
@@ -260,6 +263,12 @@ export function alreadyRegistered() {
 export function noPlayer() {
   const description = "Personne n'a participé au tournoi. Espérons qu'il y ait plus de monde la prochaine fois !"
   return embedWarn('Oh non 😿', description)
+}
+
+export function newPlayer(user: User, name: string) {
+  const description = `${user.username} participe au tournoi "${name}" !
+Tu veux participer ? Crée ton image et enregistre là avec la commande \`/mt-register\` !`
+  return embedInfo('Un nouveau joueur entre en lice !', description).setThumbnail(user.avatarURL())
 }
 
 export function mustAccept() {

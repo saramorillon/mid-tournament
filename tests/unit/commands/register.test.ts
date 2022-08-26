@@ -7,6 +7,7 @@ import {
   missingPrompt,
   missingUrl,
   mustAccept,
+  newPlayer,
   noRunning,
   registerError,
   registerSuccess,
@@ -14,6 +15,7 @@ import {
 import {
   mock,
   mockChatInteraction,
+  mockDiscordUser,
   mockParticipation,
   mockParticipationWithUser,
   mockTournament,
@@ -114,7 +116,18 @@ describe('register', () => {
     const interaction = mockChatInteraction()
     mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://url.com')
     await register(interaction)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [registerSuccess('name')] })
+    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [registerSuccess('name', mockParticipation())] })
+  })
+
+  it('should follow up with new player message', async () => {
+    jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser())
+    jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
+    jest.spyOn(prisma.participation, 'findFirst').mockResolvedValue(null)
+    const interaction = mockChatInteraction()
+    interaction.user = mockDiscordUser()
+    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://url.com')
+    await register(interaction)
+    expect(interaction.followUp).toHaveBeenCalledWith({ embeds: [newPlayer(mockDiscordUser(), 'name')] })
   })
 
   it('should reply with error message if error', async () => {

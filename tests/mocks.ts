@@ -1,5 +1,5 @@
 import { Participation, Tournament, User } from '@prisma/client'
-import { ButtonInteraction, ChatInputCommandInteraction, ModalSubmitInteraction } from 'discord.js'
+import { ButtonInteraction, ChatInputCommandInteraction, ModalSubmitInteraction, User as DiscordUser } from 'discord.js'
 
 export function mock(fn: unknown): jest.Mock {
   return fn as jest.Mock
@@ -55,6 +55,13 @@ export function mockUser(user?: Partial<User>): User {
     username: 'username',
     ...user,
   }
+}
+
+export function mockDiscordUser(): DiscordUser {
+  return {
+    username: 'username',
+    avatarURL: jest.fn().mockReturnValue('http://avatar-url.com'),
+  } as unknown as DiscordUser
 }
 
 export function mockChatInteraction(): ChatInputCommandInteraction {

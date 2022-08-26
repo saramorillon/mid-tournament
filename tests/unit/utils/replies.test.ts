@@ -8,9 +8,10 @@ import {
   formatDate,
   helpSuccess,
   infoSuccess,
+  newPlayer,
   registerSuccess,
 } from '../../../src/utils/replies'
-import { mockParticipation, mockTournament } from '../../mocks'
+import { mockDiscordUser, mockParticipation, mockTournament } from '../../mocks'
 
 describe('createSuccess', () => {
   it('should return create success message', () => {
@@ -99,13 +100,14 @@ describe('closeSuccess', () => {
 })
 
 describe('registerSuccess', () => {
-  it('should return close success message', () => {
-    const result = registerSuccess('name').toJSON()
+  it('should return register success message', () => {
+    const result = registerSuccess('name', mockParticipation()).toJSON()
     expect(result).toEqual({
       color: 8311585,
       description:
-        'Cette magnigique image est inscrite au tournoi "name".\nTu peux changer l\'image inscrite en appelant à nouveau la commande `/mt-register`',
+        'Cette magnigique image est inscrite au tournoi "name".\nTu peux modifier ton image grâce à la commande `/mt-register`.\n\n**Prompt** : `prompt`',
       title: 'Félicitations!',
+      image: { url: 'http://url.com' },
     })
   })
 })
@@ -128,6 +130,19 @@ describe('closed', () => {
       color: 16766982,
       description: 'Le tournoi "name" n\'accepte plus d\'inscriptions depuis le 1 janvier 2023 à 1h00',
       title: 'Oh non 😿',
+    })
+  })
+})
+
+describe('newPlayer', () => {
+  it('should return new player message', () => {
+    const result = newPlayer(mockDiscordUser(), 'name').toJSON()
+    expect(result).toEqual({
+      color: 4886754,
+      description:
+        'username participe au tournoi "name" !\nTu veux participer ? Crée ton image et enregistre là avec la commande `/mt-register` !',
+      title: 'Un nouveau joueur entre en lice !',
+      thumbnail: { url: 'http://avatar-url.com' },
     })
   })
 })
