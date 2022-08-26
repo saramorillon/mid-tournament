@@ -28,25 +28,44 @@ function embedSuccess(title: string, description: string) {
   return new EmbedBuilder().setColor(0x7ed321).setTitle(title).setDescription(description)
 }
 
-export function missingName() {
-  return embedError('Paramètre invalide', 'Le tournoi doit avoir un nom')
-}
-
-export function missingEndDate() {
-  return embedError('Paramètre invalide', 'Le tournoi doit avoir une endDate')
-}
-
-export function missingDescription() {
-  return embedError('Paramètre invalide', 'Le tournoi doit avoir une description')
-}
-
-export function invalidEndDateFormat() {
-  const description = "La endDate n'est pas valide. Elle doit respecter le format suivant: JJ/MM/AAAA hh:mm"
+export function missingName(name: string, strDate: string, desc: string) {
+  const description = `Le tournoi doit avoir un nom.
+Nom: ${name}
+Date: ${strDate}
+Description: ${desc}`
   return embedError('Paramètre invalide', description)
 }
 
-export function invalidEndDateValue() {
-  return embedError('Paramètre invalide', "La endDate n'est pas valide. Elle doit être dans le futur.")
+export function missingEndDate(name: string, strDate: string, desc: string) {
+  const description = `Le tournoi doit avoir une date de fin.
+Nom: ${name}
+Date: ${strDate}
+Description: ${desc}`
+  return embedError('Paramètre invalide', description)
+}
+
+export function missingDescription(name: string, strDate: string, desc: string) {
+  const description = `Le tournoi doit avoir une description.
+Nom: ${name}
+Date: ${strDate}
+Description: ${desc}`
+  return embedError('Paramètre invalide', description)
+}
+
+export function invalidEndDateFormat(name: string, strDate: string, desc: string) {
+  const description = `La date de fin n'est pas valide. Elle doit respecter le format suivant: JJ/MM/AAAA hh:mm. Attention aux espaces !
+Nom: ${name}
+Date: ${strDate}
+Description: ${desc}`
+  return embedError('Paramètre invalide', description)
+}
+
+export function invalidEndDateValue(name: string, strDate: string, desc: string) {
+  const description = `La date de fin n'est pas valide. Elle doit être dans le futur.
+Nom: ${name}
+Date: ${strDate}
+Description: ${desc}`
+  return embedError('Paramètre invalide', description)
 }
 
 export function missingPrompt() {
@@ -191,7 +210,8 @@ export function createModal() {
     .setLabel('Date de fin')
     .setStyle(TextInputStyle.Short)
     .setRequired()
-    .setPlaceholder('dd/mm/aaaa hh:mm')
+    .setPlaceholder('JJ/MM/AAAA hh:mm')
+    .setMaxLength(16)
   const description = new TextInputBuilder()
     .setCustomId('description')
     .setLabel('Description')

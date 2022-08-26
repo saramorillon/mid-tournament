@@ -37,22 +37,22 @@ export async function createCallback(interaction: ModalSubmitInteraction) {
   await interaction.deferReply({ ephemeral: true })
   try {
     const name = interaction.fields.getTextInputValue('name')
+    const strDate = interaction.fields.getTextInputValue('endDate')
+    const description = interaction.fields.getTextInputValue('description')
     if (!name) {
-      await interaction.editReply({ embeds: [missingName()] })
+      await interaction.editReply({ embeds: [missingName(name, strDate, description)] })
     } else {
-      const strDate = interaction.fields.getTextInputValue('endDate')
       if (!strDate) {
-        await interaction.editReply({ embeds: [missingEndDate()] })
+        await interaction.editReply({ embeds: [missingEndDate(name, strDate, description)] })
       } else {
         const endDate = zonedTimeToUtc(parse(strDate, 'dd/MM/yyyy HH:mm', new Date()), 'Europe/Paris')
         if (isNaN(endDate.getTime())) {
-          await interaction.editReply({ embeds: [invalidEndDateFormat()] })
+          await interaction.editReply({ embeds: [invalidEndDateFormat(name, strDate, description)] })
         } else if (!isAfter(endDate, new Date())) {
-          await interaction.editReply({ embeds: [invalidEndDateValue()] })
+          await interaction.editReply({ embeds: [invalidEndDateValue(name, strDate, description)] })
         } else {
-          const description = interaction.fields.getTextInputValue('description')
           if (!description) {
-            await interaction.editReply({ embeds: [missingDescription()] })
+            await interaction.editReply({ embeds: [missingDescription(name, strDate, description)] })
           } else {
             const tournament = await prisma.tournament.create({ data: { name, endDate, description, running: true } })
             await interaction.editReply({ embeds: [createSuccess(name)] })
