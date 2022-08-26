@@ -1,3 +1,4 @@
+import { version } from '../../../package.json'
 import {
   cancelSuccess,
   closed,
@@ -20,6 +21,7 @@ describe('createSuccess', () => {
       color: 8311585,
       description: 'Le tournoi "name" a bien été créé 👍',
       title: 'Félicitations!',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -31,6 +33,7 @@ describe('cancelSuccess', () => {
       color: 8311585,
       description: 'Le tournoi "name" a bien été annulé 👍',
       title: 'Félicitations!',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -42,6 +45,7 @@ describe('helpSuccess', () => {
       color: 4886754,
       description: expect.not.stringContaining('mt-create'),
       title: 'Aide',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 
@@ -51,6 +55,7 @@ describe('helpSuccess', () => {
       color: 4886754,
       description: expect.stringContaining('mt-create'),
       title: 'Aide',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -63,6 +68,7 @@ describe('infoSuccess', () => {
       description:
         "**Date de fin** : 1 janvier 2023 à 1h00\n**Règles du tournoi** :\ndescription\n\nIl y a pour l'instant 0 joueur !\n\nPour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image.",
       title: 'Bienvenue au tournoi "name" !',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 
@@ -73,6 +79,7 @@ describe('infoSuccess', () => {
       description:
         "**Date de fin** : 1 janvier 2023 à 1h00\n**Règles du tournoi** :\ndescription\n\nIl y a pour l'instant 10 joueurs !\n\nPour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image.",
       title: 'Bienvenue au tournoi "name" !',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 
@@ -84,6 +91,7 @@ describe('infoSuccess', () => {
         "**Date de fin** : 1 janvier 2023 à 1h00\n**Règles du tournoi** :\ndescription\n\nIl y a pour l'instant 10 joueurs !\n\nMerci d'avoir participé ! Tu peux modifier ton image grâce à la commande `/mt-register`.\n\n**Prompt** : `prompt`",
       title: 'Bienvenue au tournoi "name" !',
       image: { url: 'http://url.com' },
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -95,6 +103,7 @@ describe('closeSuccess', () => {
       color: 8311585,
       description: 'Les inscriptions au tournoi "name" ont bien été clôturé 👍',
       title: 'Félicitations!',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -108,6 +117,7 @@ describe('registerSuccess', () => {
         'Cette magnigique image est inscrite au tournoi "name".\nTu peux modifier ton image grâce à la commande `/mt-register`.\n\n**Prompt** : `prompt`',
       title: 'Félicitations!',
       image: { url: 'http://url.com' },
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -119,6 +129,7 @@ describe('downloadSuccess', () => {
       color: 8311585,
       description: "Waouh, on a eu 1 joueurs ! C'est énorme !",
       title: "C'est partiii !",
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -130,6 +141,7 @@ describe('closed', () => {
       color: 16766982,
       description: 'Le tournoi "name" n\'accepte plus d\'inscriptions depuis le 1 janvier 2023 à 1h00',
       title: 'Oh non 😿',
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })
@@ -143,6 +155,7 @@ describe('newPlayer', () => {
         'username participe au tournoi "name" !\nTu veux participer ? Crée ton image et enregistre là avec la commande `/mt-register` !',
       title: 'Un nouveau joueur entre en lice !',
       thumbnail: { url: 'http://avatar-url.com' },
+      footer: { text: `MidTournament Bot, v${version}` },
     })
   })
 })

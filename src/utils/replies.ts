@@ -12,21 +12,38 @@ import {
   TextInputStyle,
   User,
 } from 'discord.js'
+import { version } from '../../package.json'
 
 function embedError(title: string, description: string) {
-  return new EmbedBuilder().setColor(0xff3366).setTitle(title).setDescription(description)
+  return new EmbedBuilder()
+    .setColor(0xff3366)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter({ text: `MidTournament Bot, v${version}` })
 }
 
 function embedWarn(title: string, description: string) {
-  return new EmbedBuilder().setColor(0xffd806).setTitle(title).setDescription(description)
+  return new EmbedBuilder()
+    .setColor(0xffd806)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter({ text: `MidTournament Bot, v${version}` })
 }
 
 function embedInfo(title: string, description: string) {
-  return new EmbedBuilder().setColor(0x4a90e2).setTitle(title).setDescription(description)
+  return new EmbedBuilder()
+    .setColor(0x4a90e2)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter({ text: `MidTournament Bot, v${version}` })
 }
 
 function embedSuccess(title: string, description: string) {
-  return new EmbedBuilder().setColor(0x7ed321).setTitle(title).setDescription(description)
+  return new EmbedBuilder()
+    .setColor(0x7ed321)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter({ text: `MidTournament Bot, v${version}` })
 }
 
 export function missingName(name: string, strDate: string, desc: string) {
