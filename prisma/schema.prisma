@@ -34,7 +34,7 @@ model Participation {
   userId       Int
   tournamentId Int
   votes        Int
-  url          String
+  url          String @db.Text
   prompt       String @db.Text
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
