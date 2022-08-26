@@ -7,7 +7,6 @@ import {
   downloadSuccess,
   formatDate,
   helpSuccess,
-  infoPlayer,
   infoSuccess,
   registerSuccess,
 } from '../../../src/utils/replies'
@@ -61,7 +60,7 @@ describe('infoSuccess', () => {
     expect(result).toEqual({
       color: 4886754,
       description:
-        "Il y a pour l'instant 0 joueur. Tu peux participer jusqu'au 1 janvier 2023 à 1h00.\nPour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image.\n\ndescription",
+        "**Date de fin** : 1 janvier 2023 à 1h00\n**Règles du tournoi** :\ndescription\n\nIl y a pour l'instant 0 joueur !\n\nPour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image.",
       title: 'Bienvenue au tournoi "name" !',
     })
   })
@@ -71,8 +70,19 @@ describe('infoSuccess', () => {
     expect(result).toEqual({
       color: 4886754,
       description:
-        "Il y a pour l'instant 10 joueurs. Tu peux participer jusqu'au 1 janvier 2023 à 1h00.\nPour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image.\n\ndescription",
+        "**Date de fin** : 1 janvier 2023 à 1h00\n**Règles du tournoi** :\ndescription\n\nIl y a pour l'instant 10 joueurs !\n\nPour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image.",
       title: 'Bienvenue au tournoi "name" !',
+    })
+  })
+
+  it('should return info success with participation', () => {
+    const result = infoSuccess(mockTournament(), 10, mockParticipation()).toJSON()
+    expect(result).toEqual({
+      color: 4886754,
+      description:
+        "**Date de fin** : 1 janvier 2023 à 1h00\n**Règles du tournoi** :\ndescription\n\nIl y a pour l'instant 10 joueurs !\n\nMerci d'avoir participé ! Tu peux modifier ton image grâce à la commande `/mt-register`.\n\n**Prompt** : `prompt`",
+      title: 'Bienvenue au tournoi "name" !',
+      image: { url: 'http://url.com' },
     })
   })
 })
@@ -107,19 +117,6 @@ describe('downloadSuccess', () => {
       color: 8311585,
       description: "Waouh, on a eu 1 joueurs ! C'est énorme !",
       title: "C'est partiii !",
-    })
-  })
-})
-
-describe('infoPlayer', () => {
-  it('should return info message for player', () => {
-    const result = infoPlayer(mockTournament(), mockParticipation()).toJSON()
-    expect(result).toEqual({
-      color: 4886754,
-      description:
-        "Ton image a bien été inscrite au tournoi.\nTu peux la modifier jusqu'au 1 janvier 2023 à 1h00 grâce à la commande `/mt-register`\nPrompt: `prompt`",
-      image: { url: 'http://url.com' },
-      title: 'Bienvenue au tournoi "name" !',
     })
   })
 })

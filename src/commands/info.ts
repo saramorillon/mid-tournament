@@ -1,7 +1,7 @@
 import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
-import { infoError, infoPlayer, infoSuccess, noRunning } from '../utils/replies'
+import { infoError, infoSuccess, noRunning } from '../utils/replies'
 
 export async function info(interaction: ButtonInteraction | ChatInputCommandInteraction) {
   const action = logger.start('info')
@@ -20,7 +20,7 @@ export async function info(interaction: ButtonInteraction | ChatInputCommandInte
       if (!participation) {
         await interaction.editReply({ embeds: [infoSuccess(current, current._count.participations)] })
       } else {
-        await interaction.editReply({ embeds: [infoPlayer(current, participation)] })
+        await interaction.editReply({ embeds: [infoSuccess(current, current._count.participations, participation)] })
       }
     }
     action.success()

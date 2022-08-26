@@ -1,6 +1,6 @@
 import { info } from '../../../src/commands/info'
 import { prisma } from '../../../src/prisma'
-import { infoError, infoPlayer, infoSuccess, noRunning } from '../../../src/utils/replies'
+import { infoError, infoSuccess, noRunning } from '../../../src/utils/replies'
 import { mockChatInteraction, mockParticipation, mockTournament, mockTournamentWithCount } from '../../mocks'
 
 describe('info', () => {
@@ -27,7 +27,9 @@ describe('info', () => {
     jest.spyOn(prisma.participation, 'findFirst').mockResolvedValue(mockParticipation())
     const interaction = mockChatInteraction()
     await info(interaction)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [infoPlayer(mockTournament(), mockParticipation())] })
+    expect(interaction.editReply).toHaveBeenCalledWith({
+      embeds: [infoSuccess(mockTournament(), 0, mockParticipation())],
+    })
   })
 
   it('should reply with error message if error', async () => {

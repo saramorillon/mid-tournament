@@ -137,14 +137,26 @@ export function helpError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant d'afficher l'aide")
 }
 
-export function infoSuccess(tournament: Tournament, players = 0) {
+export function infoSuccess(tournament: Tournament, players = 0, participation?: Participation) {
   const s = players > 1 ? 's' : ''
-  const endDate = formatDate(tournament.endDate)
-  const description = `Il y a pour l'instant ${players} joueur${s}. Tu peux participer jusqu'au ${endDate}.
-Pour participer, entre la commande \`/mt-register\` suivi de ton prompt et du lien vers l'image.
+  let description = `**Date de fin** : ${formatDate(tournament.endDate)}
+**Règles du tournoi** :
+${tournament.description}
 
-${tournament.description}`
-  return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description)
+Il y a pour l'instant ${players} joueur${s} !
+
+`
+
+  if (!participation) {
+    description += "Pour participer, entre la commande `/mt-register` suivi de ton prompt et du lien vers l'image."
+    return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description)
+  }
+
+  description += `Merci d'avoir participé ! Tu peux modifier ton image grâce à la commande \`/mt-register\`.
+
+**Prompt** : \`${participation.prompt}\``
+
+  return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description).setImage(participation.url)
 }
 
 export function infoError() {
@@ -233,13 +245,6 @@ export function noRunning() {
     "Il n'y a pas de tournoi en cours en ce moment.",
     "Reste à l'affût, il y en aura peut-être un autre bientôt 😉"
   )
-}
-
-export function infoPlayer(tournament: Tournament, participation: Participation) {
-  const description = `Ton image a bien été inscrite au tournoi.
-Tu peux la modifier jusqu'au ${formatDate(tournament.endDate)} grâce à la commande \`/mt-register\`
-Prompt: \`${participation.prompt}\``
-  return embedInfo(`Bienvenue au tournoi "${tournament.name}" !`, description).setImage(participation.url)
 }
 
 export function closed(tournament: Tournament) {
