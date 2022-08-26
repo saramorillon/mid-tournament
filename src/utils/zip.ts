@@ -24,10 +24,14 @@ async function generateArchive(participations: (Participation & { user: User })[
 
   for (const participation of participations) {
     const stream = await new Promise<IncomingMessage>((resolve) => https.get(participation.url, resolve))
-    archive.append(stream, { name: `${participation.user.username}.png` })
+    archive.append(stream, { name: `${sanitize(participation.user.username)}.png` })
     promptoscope.write([participation.user.username, participation.prompt, participation.url])
   }
 
   promptoscope.end()
   await archive.finalize()
+}
+
+function sanitize(name: string) {
+  return name.replace(/[^a-z0-9-_]/gi, '_')
 }

@@ -3,7 +3,7 @@ import archiver from 'archiver'
 import https from 'https'
 import { PassThrough } from 'stream'
 import { zip } from '../../../src/utils/zip'
-import { mock, mockParticipationWithUser } from '../../mocks'
+import { mock, mockParticipationWithUser, mockUser } from '../../mocks'
 
 jest.mock('archiver')
 jest.mock('https')
@@ -36,10 +36,10 @@ describe('zip', () => {
   it('should add each participation file in archive', async () => {
     const archive = new Archiver()
     mock(archiver).mockReturnValue(archive)
-    const promise = zip([mockParticipationWithUser()])
+    const promise = zip([mockParticipationWithUser({ user: mockUser({ username: '^ toto //' }) })])
     archive.emit('end')
     await promise
-    expect(archive.append).toHaveBeenCalledWith('stream-http://url.com', { name: 'username.png' })
+    expect(archive.append).toHaveBeenCalledWith('stream-http://url.com', { name: '__toto___.png' })
   })
 
   it('should return archive', async () => {
