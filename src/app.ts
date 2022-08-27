@@ -27,7 +27,7 @@ export class App {
   async startServer() {
     const app = express()
     app.use(helmet())
-    app.use('/download/:id', downloadCallback)
+    app.use('/download', downloadCallback)
     await new Promise<void>((resolve) => app.listen(settings.app.port, resolve))
     logger.info('Server ready!')
   }

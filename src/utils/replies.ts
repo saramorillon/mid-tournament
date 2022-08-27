@@ -221,8 +221,8 @@ export function deleteError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant la suppression de tes données.")
 }
 
-export function downloadSuccess(id: number, participations: Participation[]) {
-  const url = new URL(`/download/${id}`, settings.app.host).toString()
+export function downloadSuccess(path: string, participations: Participation[]) {
+  const url = new URL(`/download?path=${encodeURI(path)}`, settings.app.host).toString()
   const description = `Waouh, on a eu ${participations.length} joueurs ! C'est énorme !`
   return embedSuccess('Clique ici pour télécharger le zip', description).setURL(url)
 }
@@ -346,6 +346,61 @@ export function notDeleted() {
   return embedInfo('Ravi que tu reste avec nous !', description)
 }
 
+export function downloadProgress(progress: number) {
+  return embedInfo('Génération du zip en cours...', `${Math.round(progress * 100)}%`)
+}
+
 export function formatDate(date: Date) {
   return format(utcToZonedTime(date, 'Europe/Paris'), `d MMMM yyyy 'à' H'h'mm`, { locale: fr })
+}
+
+export function missingPath() {
+  return `<!doctype html>
+<html>
+  <head>
+    <title>Invalid url</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@saramorillon/minicss@1.2.0/dist/minicss.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main>
+      <h1>Erreur 404</h1>
+      Il semble que cette page n'existe pas ='(
+    </main>
+  </body>
+</html>`
+}
+
+export function missingFile() {
+  return `<!doctype html>
+  <html>
+    <head>
+      <title>Missing file</title>
+      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
+      <link href="https://cdn.jsdelivr.net/npm/@saramorillon/minicss@1.2.0/dist/minicss.css" rel="stylesheet" />
+    </head>
+    <body>
+      <main>
+        <h1>Erreur 404</h1>
+        Le fichier demandé n'existe plus ! Tu peux le régénérer avec la commande <code>/mt-download</code>
+      </main>
+    </body>
+  </html>`
+}
+
+export function unexpectedError() {
+  return `<!doctype html>
+  <html>
+    <head>
+      <title>Missing file</title>
+      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
+      <link href="https://cdn.jsdelivr.net/npm/@saramorillon/minicss@1.2.0/dist/minicss.css" rel="stylesheet" />
+    </head>
+    <body>
+      <main>
+        <h1>Erreur</h1>
+        Une erreur empêche le téléchargement du fichier ='(
+      </main>
+    </body>
+  </html>`
 }

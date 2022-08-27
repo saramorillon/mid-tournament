@@ -123,13 +123,13 @@ describe('registerSuccess', () => {
 
 describe('downloadSuccess', () => {
   it('should return download success message', () => {
-    const result = downloadSuccess(1, [mockParticipation()]).toJSON()
+    const result = downloadSuccess('path', [mockParticipation()]).toJSON()
     expect(result).toEqual({
       color: 8311585,
       description: "Waouh, on a eu 1 joueurs ! C'est énorme !",
       title: 'Clique ici pour télécharger le zip',
       footer: { text: `MidTournament Bot, v${version}` },
-      url: 'http://localhost:3000/download/1',
+      url: 'http://localhost:3000/download?path=path',
     })
   })
 })

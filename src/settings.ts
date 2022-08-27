@@ -8,6 +8,7 @@ const env = cleanEnv(process.env, {
   GUILD_ID: str(),
   APP_PORT: num(),
   APP_HOST: url(),
+  ZIP_DIR: str({ default: '/tmp' }),
 })
 
 export const settings = {
@@ -18,6 +19,7 @@ export const settings = {
     port: env.APP_PORT,
     host: env.APP_HOST,
   },
+  zipDir: env.ZIP_DIR,
   credentials: {
     guildId: env.GUILD_ID,
     clientId: env.CLIENT_ID,

@@ -1,8 +1,19 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
+import { existsSync } from 'fs'
+import { unlink } from 'fs/promises'
 import https from 'https'
 import { download, downloadCallback } from '../../../src/commands/download'
 import { prisma } from '../../../src/prisma'
-import { downloadError, downloadSuccess, noPlayer, noRunning } from '../../../src/utils/replies'
+import {
+  downloadError,
+  downloadProgress,
+  downloadSuccess,
+  missingFile,
+  missingPath,
+  noPlayer,
+  noRunning,
+  unexpectedError,
+} from '../../../src/utils/replies'
 import {
   mock,
   mockArchiver,
@@ -11,18 +22,21 @@ import {
   mockParticipation,
   mockParticipationWithUser,
   mockTournament,
-  mockTournamentWithParticipationsWithUser,
-  mockUser,
 } from '../../mocks'
 
 jest.mock('archiver')
 jest.mock('https')
 jest.mock('@fast-csv/format')
+jest.mock('fs')
+jest.mock('fs/promises')
 
 describe('download', () => {
   beforeEach(() => {
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(null)
     jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([])
+    mock(https.get).mockImplementation((url, fn) => fn(`stream-${url}`))
+    mockArchiver()
+    mockFormatCsv()
   })
 
   it('should reply with no running message if no tournament is running', async () => {
@@ -38,12 +52,40 @@ describe('download', () => {
     expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [noPlayer()] })
   })
 
-  it('should reply with download success', async () => {
+  it('should add promptoscope in archive', async () => {
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
-    jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([mockParticipation()])
+    jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([mockParticipationWithUser()])
+    const archive = mockArchiver()
+    const promptoscope = mockFormatCsv()
+    await download(mockChatInteraction())
+    expect(promptoscope.write).toHaveBeenCalledWith(['username', 'prompt', 'http://url.com'])
+    expect(archive.append).toHaveBeenCalledWith(promptoscope, { name: 'promptoscope.csv' })
+  })
+
+  it('should add each participation file in archive', async () => {
+    jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
+    jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([mockParticipationWithUser()])
+    const archive = mockArchiver()
+    await download(mockChatInteraction())
+    expect(archive.append).toHaveBeenCalledWith('stream-http://url.com', { name: 'username.png' })
+  })
+
+  it('should reply with download progress', async () => {
+    jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
+    jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([mockParticipationWithUser()])
     const interaction = mockChatInteraction()
     await download(interaction)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [downloadSuccess(1, [mockParticipation()])] })
+    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [downloadProgress(0)] })
+  })
+
+  it('should reply with download success', async () => {
+    jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
+    jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([mockParticipationWithUser()])
+    const interaction = mockChatInteraction()
+    await download(interaction)
+    expect(interaction.editReply).toHaveBeenCalledWith({
+      embeds: [downloadSuccess('/tmp/name', [mockParticipation()])],
+    })
   })
 
   it('should reply with error message if error', async () => {
@@ -55,70 +97,42 @@ describe('download', () => {
 })
 
 describe('downloadCallback', () => {
-  beforeEach(() => {
-    jest.spyOn(prisma.tournament, 'findUnique').mockResolvedValue(null)
-    mock(https.get).mockImplementation((url, fn) => fn(`stream-${url}`))
-    mockArchiver()
-    mockFormatCsv()
-  })
-
-  it('should get tournament', async () => {
-    const req = getMockReq({ params: { id: '1' } })
+  it('should return 404 status if path is missing', async () => {
+    const req = getMockReq()
     const { res } = getMockRes()
     await downloadCallback(req, res)
-    expect(prisma.tournament.findUnique).toHaveBeenCalledWith({
-      where: { id: 1 },
-      include: { participations: { include: { user: true }, orderBy: { user: { username: 'asc' } } } },
-    })
+    expect(res.send).toHaveBeenCalledWith(missingPath())
   })
 
-  it('should return 404 status if no tournament is found', async () => {
-    const req = getMockReq({ params: { id: '1' } })
+  it('should return 404 status if path does not exists', async () => {
+    mock(existsSync).mockReturnValue(false)
+    const req = getMockReq({ query: { path: 'path' } })
     const { res } = getMockRes()
     await downloadCallback(req, res)
-    expect(res.sendStatus).toHaveBeenCalledWith(404)
+    expect(res.send).toHaveBeenCalledWith(missingFile())
   })
 
-  it('should pipe archive to response', async () => {
-    jest.spyOn(prisma.tournament, 'findUnique').mockResolvedValue(mockTournamentWithParticipationsWithUser())
-    const archive = mockArchiver()
-    const req = getMockReq({ params: { id: '1' } })
-    const { res } = getMockRes()
+  it('should download archive', async () => {
+    mock(existsSync).mockReturnValue(true)
+    const req = getMockReq({ query: { path: 'path' } })
+    const { res } = getMockRes({ download: jest.fn().mockImplementation((a, b, fn) => fn()) })
     await downloadCallback(req, res)
-    expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/zip')
-    expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'Content-Disposition: attachment; filename="name.zip"')
-    expect(archive.pipe).toHaveBeenCalledWith(res)
+    expect(res.download).toHaveBeenCalledWith('path', 'path.zip', expect.any(Function))
   })
 
-  it('should add promptoscope in archive', async () => {
-    jest.spyOn(prisma.tournament, 'findUnique').mockResolvedValue(mockTournamentWithParticipationsWithUser())
-    const archive = mockArchiver()
-    const promptoscope = mockFormatCsv()
-    const req = getMockReq({ params: { id: '1' } })
-    const { res } = getMockRes()
+  it('should delete file after download', async () => {
+    mock(existsSync).mockReturnValue(true)
+    const req = getMockReq({ query: { path: 'path' } })
+    const { res } = getMockRes({ download: jest.fn().mockImplementation((a, b, fn) => fn()) })
     await downloadCallback(req, res)
-    expect(promptoscope.write).toHaveBeenCalledWith(['username', 'prompt', 'http://url.com'])
-    expect(archive.append).toHaveBeenCalledWith(promptoscope, { name: 'promptoscope.csv' })
-  })
-
-  it('should add each participation file in archive', async () => {
-    jest.spyOn(prisma.tournament, 'findUnique').mockResolvedValue(
-      mockTournamentWithParticipationsWithUser({
-        participations: [mockParticipationWithUser({ user: mockUser({ username: '^ toto //' }) })],
-      })
-    )
-    const archive = mockArchiver()
-    const req = getMockReq({ params: { id: '1' } })
-    const { res } = getMockRes()
-    await downloadCallback(req, res)
-    expect(archive.append).toHaveBeenCalledWith('stream-http://url.com', { name: '__toto___.png' })
+    expect(unlink).toHaveBeenCalledWith('path')
   })
 
   it('should return 500 status if error', async () => {
-    jest.spyOn(prisma.tournament, 'findUnique').mockRejectedValue(new Error('500'))
-    const req = getMockReq({ params: { id: '1' } })
-    const { res } = getMockRes()
+    mock(existsSync).mockReturnValue(true)
+    const req = getMockReq({ query: { path: 'path' } })
+    const { res } = getMockRes({ download: jest.fn().mockImplementation((a, b, fn) => fn(new Error('500'))) })
     await downloadCallback(req, res)
-    expect(res.sendStatus).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith(unexpectedError())
   })
 })

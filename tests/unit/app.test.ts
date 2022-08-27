@@ -93,7 +93,7 @@ describe('startServer', () => {
     const express = mockExpress()
     const app = new App()
     await app.startServer()
-    expect(express.use).toHaveBeenCalledWith('/download/:id', downloadCallback)
+    expect(express.use).toHaveBeenCalledWith('/download', downloadCallback)
   })
 
   it('should listen to settings port', async () => {
