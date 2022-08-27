@@ -4,7 +4,6 @@ import {
   closed,
   closeSuccess,
   createSuccess,
-  downloadAttachment,
   downloadSuccess,
   formatDate,
   helpSuccess,
@@ -124,12 +123,13 @@ describe('registerSuccess', () => {
 
 describe('downloadSuccess', () => {
   it('should return download success message', () => {
-    const result = downloadSuccess([mockParticipation()]).toJSON()
+    const result = downloadSuccess(1, [mockParticipation()]).toJSON()
     expect(result).toEqual({
       color: 8311585,
       description: "Waouh, on a eu 1 joueurs ! C'est énorme !",
-      title: "C'est partiii !",
+      title: 'Clique ici pour télécharger le zip',
       footer: { text: `MidTournament Bot, v${version}` },
+      url: 'http://localhost:3000/download/1',
     })
   })
 })
@@ -156,16 +156,6 @@ describe('newPlayer', () => {
       title: 'Un nouveau joueur entre en lice !',
       thumbnail: { url: 'http://avatar-url.com' },
       footer: { text: `MidTournament Bot, v${version}` },
-    })
-  })
-})
-
-describe('downloadAttachment', () => {
-  it('should return closed message', () => {
-    const result = downloadAttachment('name', Buffer.from([])).toJSON()
-    expect(result).toEqual({
-      name: 'name.zip',
-      attachment: { data: [], type: 'Buffer' },
     })
   })
 })

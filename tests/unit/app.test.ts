@@ -1,57 +1,112 @@
 import { Client, GatewayIntentBits } from 'discord.js'
-import EventEmitter from 'events'
+import helmet from 'helmet'
 import { App } from '../../src/app'
 import { acceptCallback } from '../../src/commands/accept'
 import { createCallback } from '../../src/commands/create'
 import { deleteDataCallback } from '../../src/commands/delete'
+import { downloadCallback } from '../../src/commands/download'
 import { info } from '../../src/commands/info'
 import { logger } from '../../src/logger'
-import { mock, mockButtonInteraction, mockChatInteraction, mockModalInteraction } from '../mocks'
+import {
+  mock,
+  mockButtonInteraction,
+  mockChatInteraction,
+  mockDiscordClient,
+  mockExpress,
+  mockModalInteraction,
+} from '../mocks'
 
 jest.mock('discord.js', () => ({ ...jest.requireActual('discord.js'), Client: jest.fn() }))
+jest.mock('express')
+jest.mock('helmet')
 jest.mock('../../src/logger')
 jest.mock('../../src/commands/info')
 jest.mock('../../src/commands/accept')
 jest.mock('../../src/commands/delete')
 jest.mock('../../src/commands/create')
 
-class MockClient extends EventEmitter {
-  login = jest.fn()
-}
-
 describe('run', () => {
+  it('should start client', async () => {
+    const app = new App()
+    app.startClient = jest.fn()
+    app.startServer = jest.fn()
+    await app.run()
+    expect(app.startClient).toHaveBeenCalled()
+  })
+
+  it('should start server', async () => {
+    const app = new App()
+    app.startClient = jest.fn()
+    app.startServer = jest.fn()
+    await app.run()
+    expect(app.startServer).toHaveBeenCalled()
+  })
+})
+
+describe('startClient', () => {
   beforeEach(() => {
-    mock(Client).mockReturnValue(new MockClient())
+    mockDiscordClient()
   })
 
   it('should create client', async () => {
-    await new App().run()
+    await new App().startClient()
     expect(Client).toHaveBeenCalledWith({ intents: [GatewayIntentBits.Guilds] })
   })
 
   it('should log when ready', async () => {
-    const clientMock = new MockClient()
-    mock(Client).mockReturnValue(clientMock)
-    await new App().run()
+    const clientMock = mockDiscordClient()
+    await new App().startClient()
     clientMock.emit('ready')
-    expect(logger.info).toHaveBeenCalledWith('Ready!')
+    expect(logger.info).toHaveBeenCalledWith('Client ready!')
   })
 
   it('should listen to interaction event', async () => {
-    const clientMock = new MockClient()
-    mock(Client).mockReturnValue(clientMock)
+    const clientMock = mockDiscordClient()
     const app = new App()
     app.onInteraction = jest.fn()
-    await app.run()
+    await app.startClient()
     clientMock.emit('interactionCreate', 'interaction')
     expect(app.onInteraction).toHaveBeenCalledWith('interaction')
   })
 
   it('should login using token', async () => {
-    const clientMock = new MockClient()
-    mock(Client).mockReturnValue(clientMock)
-    await new App().run()
+    const clientMock = mockDiscordClient()
+    await new App().startClient()
     expect(clientMock.login).toHaveBeenCalledWith('token')
+  })
+})
+
+describe('startServer', () => {
+  beforeEach(() => {
+    mockExpress()
+    mock(helmet).mockReturnValue('helmet')
+  })
+
+  it('should use helmet', async () => {
+    const express = mockExpress()
+    const app = new App()
+    await app.startServer()
+    expect(express.use).toHaveBeenCalledWith('helmet')
+  })
+
+  it('should use route', async () => {
+    const express = mockExpress()
+    const app = new App()
+    await app.startServer()
+    expect(express.use).toHaveBeenCalledWith('/download/:id', downloadCallback)
+  })
+
+  it('should listen to settings port', async () => {
+    const express = mockExpress()
+    const app = new App()
+    await app.startServer()
+    expect(express.listen).toHaveBeenCalledWith(3000, expect.any(Function))
+  })
+
+  it('should log success', async () => {
+    const app = new App()
+    await app.startServer()
+    expect(logger.info).toHaveBeenCalledWith('Server ready!')
   })
 })
 

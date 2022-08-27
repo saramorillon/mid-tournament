@@ -3,7 +3,6 @@ import { format, utcToZonedTime } from 'date-fns-tz'
 import { fr } from 'date-fns/locale'
 import {
   ActionRowBuilder,
-  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
@@ -13,6 +12,7 @@ import {
   User,
 } from 'discord.js'
 import { version } from '../../package.json'
+import { settings } from '../settings'
 
 function embedError(title: string, description: string) {
   return new EmbedBuilder()
@@ -221,8 +221,10 @@ export function deleteError() {
   return embedError('Oh non 😿', "Une erreur s'est produite, empêchant la suppression de tes données.")
 }
 
-export function downloadSuccess(participations: Participation[]) {
-  return embedSuccess("C'est partiii !", `Waouh, on a eu ${participations.length} joueurs ! C'est énorme !`)
+export function downloadSuccess(id: number, participations: Participation[]) {
+  const url = new URL(`/download/${id}`, settings.app.host).toString()
+  const description = `Waouh, on a eu ${participations.length} joueurs ! C'est énorme !`
+  return embedSuccess('Clique ici pour télécharger le zip', description).setURL(url)
 }
 
 export function downloadError() {
@@ -342,10 +344,6 @@ export function notDeleted() {
   const description =
     'Ok, tes données seront conservées. Si tu veux les supprimer, tu peux utiliser à tout moment la commande `/mt-delete-data`'
   return embedInfo('Ravi que tu reste avec nous !', description)
-}
-
-export function downloadAttachment(name: string, archive: Buffer) {
-  return new AttachmentBuilder(archive).setName(`${name}.zip`)
 }
 
 export function formatDate(date: Date) {

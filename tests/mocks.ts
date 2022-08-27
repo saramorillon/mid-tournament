@@ -1,5 +1,16 @@
+import { format } from '@fast-csv/format'
 import { Participation, Tournament, User } from '@prisma/client'
-import { ButtonInteraction, ChatInputCommandInteraction, ModalSubmitInteraction, User as DiscordUser } from 'discord.js'
+import archiver from 'archiver'
+import {
+  ButtonInteraction,
+  ChatInputCommandInteraction,
+  Client,
+  ModalSubmitInteraction,
+  User as DiscordUser,
+} from 'discord.js'
+import EventEmitter from 'events'
+import express from 'express'
+import { PassThrough } from 'stream'
 
 export function mock(fn: unknown): jest.Mock {
   return fn as jest.Mock
@@ -13,6 +24,21 @@ export function mockTournament(tournament?: Partial<Tournament>): Tournament {
     running: true,
     startDate: new Date('2022-01-01T00:00:00.000Z'),
     endDate: new Date('2023-01-01T00:00:00.000Z'),
+    ...tournament,
+  }
+}
+
+export function mockTournamentWithParticipationsWithUser(
+  tournament?: Partial<Tournament & { participations: (Participation & { user: User })[] }>
+): Tournament & { participations: (Participation & { user: User })[] } {
+  return {
+    id: 1,
+    name: 'name',
+    description: 'description',
+    running: true,
+    startDate: new Date('2022-01-01T00:00:00.000Z'),
+    endDate: new Date('2023-01-01T00:00:00.000Z'),
+    participations: [mockParticipationWithUser()],
     ...tournament,
   }
 }
@@ -103,4 +129,38 @@ export function mockModalInteraction(): ModalSubmitInteraction {
     isButton: jest.fn().mockReturnValue(false),
     isModalSubmit: jest.fn().mockReturnValue(true),
   } as unknown as ModalSubmitInteraction
+}
+
+class MockClient extends EventEmitter {
+  login = jest.fn()
+}
+
+export function mockDiscordClient() {
+  const clientMock = new MockClient()
+  mock(Client).mockReturnValue(clientMock)
+  return clientMock
+}
+
+class Archiver extends PassThrough {
+  pipe = jest.fn()
+  append = jest.fn()
+  finalize = jest.fn()
+}
+
+export function mockArchiver() {
+  const archive = new Archiver()
+  mock(archiver).mockReturnValue(archive)
+  return archive
+}
+
+export function mockFormatCsv() {
+  const promptoscope = { write: jest.fn(), end: jest.fn() }
+  mock(format).mockReturnValue(promptoscope)
+  return promptoscope
+}
+
+export function mockExpress() {
+  const app = { use: jest.fn(), listen: jest.fn().mockImplementation((_, fn) => fn()) }
+  mock(express).mockReturnValue(app)
+  return app
 }
