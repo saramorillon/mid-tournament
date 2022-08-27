@@ -114,7 +114,7 @@ describe('registerSuccess', () => {
     expect(result).toEqual({
       color: 8311585,
       description:
-        'Cette magnigique image est inscrite au tournoi "name".\nTu peux modifier ton image grâce à la commande `/mt-register`.\n\n**Prompt** : `prompt`',
+        'Cette magnifique image est inscrite au tournoi "name".\nTu peux modifier ton image grâce à la commande `/mt-register`.\n\n**Prompt** : `prompt`',
       title: 'Félicitations!',
       image: { url: 'http://url.com' },
       footer: { text: `MidTournament Bot, v${version}` },

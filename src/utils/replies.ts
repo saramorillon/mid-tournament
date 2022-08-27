@@ -190,7 +190,7 @@ export function closeError() {
 }
 
 export function registerSuccess(name: string, participation: Participation) {
-  const description = `Cette magnigique image est inscrite au tournoi "${name}".
+  const description = `Cette magnifique image est inscrite au tournoi "${name}".
 Tu peux modifier ton image grâce à la commande \`/mt-register\`.
 
 **Prompt** : \`${participation.prompt}\``
