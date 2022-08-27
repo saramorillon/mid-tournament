@@ -284,7 +284,7 @@ export function noPlayer() {
 
 export function newPlayer(user: User, name: string) {
   const description = `${user.username} participe au tournoi "${name}" !
-Tu veux participer ? Crée ton image et enregistre là avec la commande \`/mt-register\` !`
+Tu veux participer ? Crée ton image et enregistre-la avec la commande \`/mt-register\` !`
   return embedInfo('Un nouveau joueur entre en lice !', description).setThumbnail(user.avatarURL())
 }
 

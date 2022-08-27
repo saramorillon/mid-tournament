@@ -152,7 +152,7 @@ describe('newPlayer', () => {
     expect(result).toEqual({
       color: 4886754,
       description:
-        'username participe au tournoi "name" !\nTu veux participer ? Crée ton image et enregistre là avec la commande `/mt-register` !',
+        'username participe au tournoi "name" !\nTu veux participer ? Crée ton image et enregistre-la avec la commande `/mt-register` !',
       title: 'Un nouveau joueur entre en lice !',
       thumbnail: { url: 'http://avatar-url.com' },
       footer: { text: `MidTournament Bot, v${version}` },
