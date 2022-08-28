@@ -1,11 +1,10 @@
 import { format } from '@fast-csv/format'
 import archiver from 'archiver'
+import axios from 'axios'
 import { ChatInputCommandInteraction } from 'discord.js'
 import { Request, Response } from 'express'
 import { createWriteStream, existsSync } from 'fs'
 import { unlink } from 'fs/promises'
-import { IncomingMessage } from 'http'
-import https from 'https'
 import { parse } from 'path'
 import { logger } from '../logger'
 import { prisma } from '../prisma'
@@ -46,7 +45,7 @@ export async function download(interaction: ChatInputCommandInteraction) {
         archive.append(promptoscope, { name: 'promptoscope.csv' })
 
         for (const [index, participation] of participations.entries()) {
-          const stream = await new Promise<IncomingMessage>((resolve) => https.get(participation.url, resolve))
+          const { data: stream } = await axios.get(participation.url, { responseType: 'stream' })
           archive.append(stream, { name: `${sanitize(participation.user.username)}.png` })
           promptoscope.write([participation.user.username, participation.prompt, participation.url])
           await interaction.editReply({ embeds: [downloadProgress(index / participations.length)] })
@@ -78,7 +77,6 @@ export async function downloadCallback(req: Request, res: Response) {
       await new Promise<void>((resolve, reject) =>
         res.download(path, `${name}.zip`, (err) => (err ? reject(err) : resolve()))
       )
-      console.log('Coucou')
       await unlink(path)
     }
     action.success()

@@ -1,7 +1,7 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
+import axios from 'axios'
 import { existsSync } from 'fs'
 import { unlink } from 'fs/promises'
-import https from 'https'
 import { download, downloadCallback } from '../../../src/commands/download'
 import { prisma } from '../../../src/prisma'
 import {
@@ -25,7 +25,7 @@ import {
 } from '../../mocks'
 
 jest.mock('archiver')
-jest.mock('https')
+jest.mock('axios')
 jest.mock('@fast-csv/format')
 jest.mock('fs')
 jest.mock('fs/promises')
@@ -34,7 +34,7 @@ describe('download', () => {
   beforeEach(() => {
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(null)
     jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([])
-    mock(https.get).mockImplementation((url, fn) => fn(`stream-${url}`))
+    mock(axios.get).mockResolvedValue({ data: 'stream' })
     mockArchiver()
     mockFormatCsv()
   })
@@ -67,7 +67,7 @@ describe('download', () => {
     jest.spyOn(prisma.participation, 'findMany').mockResolvedValue([mockParticipationWithUser()])
     const archive = mockArchiver()
     await download(mockChatInteraction())
-    expect(archive.append).toHaveBeenCalledWith('stream-http://url.com', { name: 'username.png' })
+    expect(archive.append).toHaveBeenCalledWith('stream', { name: 'username.png' })
   })
 
   it('should reply with download progress', async () => {
