@@ -68,7 +68,8 @@ export async function register(interaction: ChatInputCommandInteraction) {
 
 function isUrlValid(url: string): boolean {
   try {
-    return ['http:', 'https:'].includes(new URL(url).protocol)
+    const { protocol, hostname } = new URL(url)
+    return ['http:', 'https:'].includes(protocol) && hostname === 'mj-gallery.com'
   } catch (error) {
     return false
   }

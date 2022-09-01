@@ -84,7 +84,7 @@ describe('register', () => {
     jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser({ username: 'another user' }))
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
     const interaction = mockChatInteraction()
-    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://url.com')
+    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://mj-gallery.com/toto')
     await register(interaction)
     expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [alreadyRegistered()] })
   })
@@ -94,17 +94,17 @@ describe('register', () => {
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
     jest.spyOn(prisma.participation, 'findFirst').mockResolvedValue(null)
     const interaction = mockChatInteraction()
-    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://url.com')
+    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://mj-gallery.com/toto')
     await register(interaction)
     expect(prisma.participation.upsert).toHaveBeenCalledWith({
       create: {
         prompt: 'prompt',
         tournamentId: 1,
-        url: 'http://url.com',
+        url: 'http://mj-gallery.com/toto',
         userId: 1,
         votes: 0,
       },
-      update: { prompt: 'prompt', url: 'http://url.com' },
+      update: { prompt: 'prompt', url: 'http://mj-gallery.com/toto' },
       where: { tournamentId_userId: { tournamentId: 1, userId: 1 } },
     })
   })
@@ -114,7 +114,7 @@ describe('register', () => {
     jest.spyOn(prisma.tournament, 'findFirst').mockResolvedValue(mockTournament())
     jest.spyOn(prisma.participation, 'findFirst').mockResolvedValue(null)
     const interaction = mockChatInteraction()
-    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://url.com')
+    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://mj-gallery.com/toto')
     await register(interaction)
     expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [registerSuccess('name', mockParticipation())] })
   })
@@ -125,7 +125,7 @@ describe('register', () => {
     jest.spyOn(prisma.participation, 'findFirst').mockResolvedValue(null)
     const interaction = mockChatInteraction()
     interaction.user = mockDiscordUser()
-    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://url.com')
+    mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://mj-gallery.com/toto')
     await register(interaction)
     expect(interaction.followUp).toHaveBeenCalledWith({ embeds: [newPlayer(mockDiscordUser(), 'name')] })
   })

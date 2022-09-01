@@ -95,7 +95,9 @@ export function missingUrl() {
 }
 
 export function invalidUrl() {
-  return embedError('Paramètre invalide', "L'url doit être une url valide")
+  const description = `L'url doit être une url Midjourney valide (\`https://mj-gallery.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/grid_0.png\`).
+Pour récupérer cette URL, va sur ton compte Midjourney, trouve l'image et clique sur "Ouvrir l'image dans un nouvel onglet"`
+  return embedError('Paramètre invalide', description)
 }
 
 export function createSuccess(name: string) {
