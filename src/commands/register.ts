@@ -53,7 +53,7 @@ export async function register(interaction: ChatInputCommandInteraction) {
                 update: { prompt, url },
               })
               await interaction.editReply({ embeds: [registerSuccess(current.name, participation)] })
-              await interaction.followUp({ embeds: [newPlayer(interaction.user, current.name)] })
+              await interaction.channel?.send({ embeds: [newPlayer(interaction.user, current.name, participation)] })
             }
           }
         }

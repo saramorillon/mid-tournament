@@ -125,7 +125,7 @@ describe('createCallback', () => {
       .mockReturnValueOnce('01/01/2023 01:00')
       .mockReturnValueOnce('description')
     await createCallback(interaction)
-    expect(interaction.followUp).toHaveBeenCalledWith({ embeds: [infoSuccess(mockTournament())] })
+    expect(interaction.channel?.send).toHaveBeenCalledWith({ embeds: [infoSuccess(mockTournament())] })
   })
 
   it('should reply with error message if error', async () => {

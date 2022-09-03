@@ -148,14 +148,15 @@ describe('closed', () => {
 
 describe('newPlayer', () => {
   it('should return new player message', () => {
-    const result = newPlayer(mockDiscordUser(), 'name').toJSON()
+    const result = newPlayer(mockDiscordUser(), 'name', mockParticipation()).toJSON()
     expect(result).toEqual({
       color: 4886754,
       description:
-        'username participe au tournoi "name" !\nTu veux participer ? Crée ton image et enregistre-la avec la commande `/mt-register` !',
-      title: 'Un nouveau joueur entre en lice !',
+        'Tu veux participer ? Crée ton image et enregistre-la avec la commande `/mt-register` !\n\nPrompt: `prompt`',
+      title: 'username participe au tournoi "name" !',
       thumbnail: { url: 'http://avatar-url.com' },
       footer: { text: `MidTournament Bot, v${version}` },
+      image: { url: 'http://url.com' },
     })
   })
 })

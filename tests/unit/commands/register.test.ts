@@ -127,7 +127,9 @@ describe('register', () => {
     interaction.user = mockDiscordUser()
     mock(interaction.options.getString).mockReturnValueOnce('prompt').mockReturnValueOnce('http://mj-gallery.com/toto')
     await register(interaction)
-    expect(interaction.followUp).toHaveBeenCalledWith({ embeds: [newPlayer(mockDiscordUser(), 'name')] })
+    expect(interaction.channel?.send).toHaveBeenCalledWith({
+      embeds: [newPlayer(mockDiscordUser(), 'name', mockParticipation())],
+    })
   })
 
   it('should reply with error message if error', async () => {
